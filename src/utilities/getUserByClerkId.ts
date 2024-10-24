@@ -6,7 +6,7 @@ export async function getUserIdByClerkId(clerkId: string): Promise<number> {
 
   try {
     const result = await db.query(
-      "SELECT user_id FROM appusers WHERE clerk_id = $1",
+      "SELECT user_id FROM users WHERE clerk_id = $1",
       [clerkId]
     );
 
