@@ -20,9 +20,9 @@ export default async function ActivityComponent({
   } = activity;
 
   const username = await getUsernameById(user_id);
-
   const film = await getFilmById(film_id);
 
+  // translate activity types to a phrase to display
   let verb = "";
   if (activity_type === "watch") {
     verb = "watched";
