@@ -2,7 +2,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 
 export default async function NavBar() {
-  const username = (await currentUser())!.username; // TODO use context when available
+  const user = await currentUser();
+  const username = user?.username; // TODO use context when available
   return (
     <nav className="flex h-full items-center justify-center gap-4 pl-4">
       <Link href="/">Home</Link>
