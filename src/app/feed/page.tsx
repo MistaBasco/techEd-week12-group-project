@@ -63,13 +63,10 @@ export default async function Feed() {
   }
 
   async function getActivities(): Promise<Activity[]> {
-    console.log("getting activities");
     const db = connect();
     const result = await db.query<Activity>(
       `SELECT * FROM activities ORDER BY created_at DESC`
     );
-    console.log(result);
-
     return result.rows;
   }
 

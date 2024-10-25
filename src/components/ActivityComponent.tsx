@@ -1,7 +1,9 @@
 import { Activity } from "@/app/feed/page";
+import CommentDisplay, { Comment } from "./CommentDisplay";
 import getFilmById from "@/utilities/getFilmById";
 import getUsernameById from "@/utilities/getUsernameById";
 import Timestamp from "./Timestamp";
+import connect from "@/utilities/connect";
 
 export default async function ActivityComponent({
   activity,
@@ -16,8 +18,11 @@ export default async function ActivityComponent({
     activity_type,
     created_at,
   } = activity;
+
   const username = await getUsernameById(user_id);
+
   const film = await getFilmById(film_id);
+
   let verb = "";
   if (activity_type === "watch") {
     verb = "watched";
@@ -26,6 +31,7 @@ export default async function ActivityComponent({
   } else if (activity_type === "watch_from_wtw") {
     verb = "watched their wanted film";
   }
+
   return (
     <>
       <p id={`activity#${activity_id}`}>
@@ -39,6 +45,16 @@ export default async function ActivityComponent({
       ) : (
         <></>
       )}
+      <CommentDisplay comments={await getComments(activity_id)} />
     </>
   );
+
+  async function getComments(post_id: number) {
+    const db = connect();
+    const result = await db.query<Comment>(
+      `SELECT * FROM comments WHERE activity_id = $1`,
+      [post_id]
+    );
+    return result.rows;
+  }
 }
