@@ -10,13 +10,13 @@ export default function CommentDisplay({ postId, serverAction }) {
       const result = await serverAction(postId);
       if (result && result.length > 0) {
         setComments(result);
-        console.log("Comments state set:", result); state
+        console.log("Comments state set:", result);
       }
     }
     fetchComments();
   }, [postId, serverAction]);
 
-  console.log("Current comments state:", comments); 
+  console.log("Current comments state:", comments);
 
   return (
     <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
