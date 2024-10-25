@@ -1,10 +1,6 @@
 import { SignUp } from "@clerk/nextjs";
 
-interface SignUpProps {
-  // Define any props here if needed
-}
-
-function SignInComponent(props: SignUpProps) {
+function SignUpComponent() {
   return (
     <>
       <SignUp />
@@ -12,4 +8,4 @@ function SignInComponent(props: SignUpProps) {
   );
 }
 
-export default SignInComponent;
+export default SignUpComponent;
