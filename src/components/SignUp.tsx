@@ -4,7 +4,7 @@ interface SignUpProps {
   // Define any props here if needed
 }
 
-function SignInComponent(props: SignUpProps) {
+function SignUpComponent(props: SignUpProps) {
   return (
     <>
       <SignUp />
@@ -12,4 +12,4 @@ function SignInComponent(props: SignUpProps) {
   );
 }
 
-export default SignInComponent;
+export default SignUpComponent;
