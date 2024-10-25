@@ -5,5 +5,5 @@ export default clerkMiddleware({
 });
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/api/review/:path*"],
+  matcher: ["/((?!.*\\..*|_next).*)"],
 };
