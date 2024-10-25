@@ -16,9 +16,9 @@ export default function Header() {
           <UserButton />
         </SignedIn>
         <SignedOut>
-          <Link href="/sign-in/whatever">Sign In</Link>
-          <Link href="/sign-up/whatever">Sign Up</Link>
-        </SignedOut>{" "}
+          <Link href="/sign-in/">Sign In</Link>
+          <Link href="/sign-up/">Sign Up</Link>
+        </SignedOut>
       </div>
     </header>
   );
