@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import CommentFormInput from "./CommentFormInput";
 
-export default function PostComment({ serverAction }) {
+export default function PostComment({
+  submitComment,
+}: {
+  submitComment: (myData: string) => void;
+}) {
   const [formData, setFormData] = useState({
     username: "",
     comment: "",
@@ -11,20 +15,21 @@ export default function PostComment({ serverAction }) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setIsSubmitting(true);
 
-    const commentData = new FormData(event.target);
-    const myData = Object.fromEntries(commentData); 
+    const commentData = new FormData(event.currentTarget);
+    const myData = commentData.get("comment");
+
     try {
-      serverAction(myData);
+      submitComment(myData as string);
 
       console.log("Comment successfully posted:", myData);
-      
+
       setFormData({ username: "", comment: "" });
-      event.target.reset();
+      event.currentTarget.reset();
     } catch (error) {
       console.error("Error posting comment:", error);
     } finally {
@@ -32,8 +37,11 @@ export default function PostComment({ serverAction }) {
     }
   }
 
-  function handleChange(event) {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setFormData({
+      ...formData,
+      [event.currentTarget.name]: event.currentTarget.value,
+    });
   }
 
   return (
@@ -44,17 +52,14 @@ export default function PostComment({ serverAction }) {
       <form
         method="POST"
         onSubmit={handleSubmit}
-       
         className="flex flex-col bg-slate-400 p-16 gap-[13px]"
       >
         <CommentFormInput
           onChange={handleChange}
           name="comment"
           placeholder="Enter comment here"
-          type="text"
           value={formData.comment}
         />
-
         <button
           className={`rounded p-4 ${
             formData.username.length < 1 ? "bg-slate-500" : "bg-green-500"

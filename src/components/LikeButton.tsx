@@ -1,13 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
 
+type LikeButtonProps = {
+  postId: number;
+  userId: number;
+  likeFunc: (postId: number, userId: number, hasLiked: boolean) => void;
+  checkIfLiked: (postId: number, userId: number) => boolean;
+};
+
 export default function LikeButton({
   postId,
   userId,
-  serverAction,
+  likeFunc,
   checkIfLiked,
-}) {
-  const [hasLiked, setHasLiked] = useState(false);
+}: LikeButtonProps) {
+  const [hasLiked, setHasLiked] = useState<boolean>(false);
 
   useEffect(() => {
     async function checkLikes() {
@@ -15,12 +22,10 @@ export default function LikeButton({
       setHasLiked(result);
     }
     checkLikes();
-  }, [postId, userId]);
-
-  
+  }, [postId, userId, checkIfLiked]);
 
   async function handleClick() {
-    serverAction(postId, userId, hasLiked);
+    likeFunc(postId, userId, hasLiked);
     setHasLiked(!hasLiked);
   }
 
