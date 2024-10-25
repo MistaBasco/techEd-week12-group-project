@@ -1,10 +1,6 @@
 import { SignIn } from "@clerk/nextjs";
 
-interface SignInProps {
-  // Define any props here if needed
-}
-
-function SignInComponent(props: SignInProps) {
+function SignInComponent() {
   return (
     <>
       <SignIn />
