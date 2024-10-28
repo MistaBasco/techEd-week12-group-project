@@ -5,7 +5,7 @@ import connect from "@/utilities/connect";
 export const runtime = "nodejs"; // Specifies the runtime environment for the function. Use 'nodejs' or 'edge' depending on requirements.
 export const preferredRegion = "auto"; // Determines the preferred region for executing the function. 'auto' allows the platform to select the optimal region.
 
-const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET; // Fetch the webhook secret from environment variables for verifying incoming webhooks.
+const WEBHOOK_SECRET = process.env.USER_CREATED_WEBHOOK_SECRET; // Fetch the webhook secret from environment variables for verifying incoming webhooks.
 
 export async function POST(req) {
   // Ensure the WEBHOOK_SECRET is available
