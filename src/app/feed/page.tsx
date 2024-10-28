@@ -14,23 +14,6 @@ export type Activity = {
 };
 
 export default async function Feed() {
-  // async function handleDelete(postId: number) {
-  //   "use server";
-
-  //   try {
-  //     const db = connect();
-  //     const result = await db.query(
-  //       "DELETE FROM comments WHERE activity_id = $1",
-  //       [postId]
-  //     );
-  //     console.log(result);
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-
-  //   revalidatePath(`/feed`);
-  // }
-
   // async function updateLikes(
   //   postId: number,
   //   userId: number,
