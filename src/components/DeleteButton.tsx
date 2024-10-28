@@ -27,7 +27,7 @@ export default function DeleteButton({
   return (
     <button
       onClick={handleDelete}
-      className="absolute top-2 right-2 text-black font-bold text-xl" // hidden group-hover:block
+      className="absolute top-2 right-2 text-gray-500 font-bold text-xl" // hidden group-hover:block
     >
       ×
     </button>

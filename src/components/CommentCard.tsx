@@ -52,7 +52,7 @@ async function handleDelete(postId: number) {
   try {
     const db = connect();
     const result = await db.query(
-      "DELETE FROM comments WHERE activity_id = $1",
+      "DELETE FROM comments WHERE comment_id = $1",
       [postId]
     );
     console.log(result);

@@ -4,6 +4,8 @@ import getFilmById from "@/utilities/getFilmById";
 import getUsernameById from "@/utilities/getUsernameById";
 import Timestamp from "./Timestamp";
 import connect from "@/utilities/connect";
+import { revalidatePath } from "next/cache";
+import DeleteButton from "./DeleteButton";
 
 export default async function ActivityComponent({
   activity,
@@ -33,7 +35,7 @@ export default async function ActivityComponent({
   }
 
   return (
-    <>
+    <div className="relative">
       <p id={`activity#${activity_id}`}>
         {username} {verb} {film.title}
       </p>
@@ -45,8 +47,13 @@ export default async function ActivityComponent({
       ) : (
         <></>
       )}
+      <DeleteButton
+        deleteFunc={handleDelete}
+        postId={activity_id}
+        postType="activity"
+      />
       <CommentDisplay comments={await getComments(activity_id)} />
-    </>
+    </div>
   );
 
   async function getComments(post_id: number) {
@@ -57,4 +64,21 @@ export default async function ActivityComponent({
     );
     return result.rows;
   }
+}
+
+async function handleDelete(postId: number) {
+  "use server";
+
+  try {
+    const db = connect();
+    const result = await db.query(
+      "DELETE FROM activities WHERE activity_id = $1",
+      [postId]
+    );
+    console.log(result);
+  } catch (e) {
+    console.error(e);
+  }
+
+  revalidatePath(`/feed`); // TODO change this to current path
 }

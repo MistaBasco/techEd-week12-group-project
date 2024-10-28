@@ -3,7 +3,10 @@ import connect from "./connect";
 export type Film = {
   film_id: number;
   title: string;
-  blurb: string;
+  director?: string;
+  overview?: string;
+  poster_path?: string;
+  vote_average: number;
   release_year: number;
   created_at: Date;
   updated_at: Date;
