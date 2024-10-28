@@ -1,5 +1,6 @@
 import getUsernameById from "@/utilities/getUsernameById";
-// import Image from "next/image";
+import Image from "next/image";
+import connect from "@/utilities/connect";
 
 export type Comment = {
   comment_id: number;
@@ -18,24 +19,27 @@ export default function CommentDisplay({ comments }: CommentDisplayProps) {
     <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
       <h3 className="text-lg font-semibold mb-4 text-gray-700">Comments</h3>
       {comments.length > 0 ? (
-        comments.map(async (comment) => {
+        comments.map(async (comment: Comment) => {
           const username = await getUsernameById(comment.user_id);
+          const db = connect();
+          const result = await db.query<{ profile_image_url: string }>(
+            `SELECT profile_image_url FROM users WHERE user_id = $1`,
+            [comment.user_id]
+          );
+          const profile_image = result.rows[0].profile_image_url;
           return (
             <div
               key={comment.comment_id}
               className="flex gap-4 items-start mb-4 border-b pb-4 border-gray-300"
             >
               <div className="w-10 h-10">
-                {
-                  /* <Image
-                src={comment.profile_image}
-                alt="Profile"
-                width={40}
-                height={40}
-                className="rounded-full"
-              /> */
-                  // TODO get profile picture from clerk by user_id
-                }
+                <Image
+                  src={profile_image}
+                  alt="Profile"
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                />
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-800">
