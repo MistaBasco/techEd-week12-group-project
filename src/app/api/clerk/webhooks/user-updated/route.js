@@ -46,22 +46,26 @@ export async function POST(req) {
 
   if (type === "user.updated") {
     // Check if the event type is 'user.updated'.
-    const { id: clerk_id, profile_image_url } = data; // Extract the necessary fields from the event data.
+    const { id: clerk_id, profile_image_url, email_addresses, username } = data; // Extract the necessary fields from the event data.
+    const email = email_addresses[0]?.email_address;
 
-    if (!profile_image_url) {
-      return new Response("No profile image to update", { status: 400 }); // Return a 400 response if there is no profile image to update.
+    if (!profile_image_url && !email && !username) {
+      return new Response("No profile information to update", { status: 400 }); // Return a 400 response if there is no profile information to update.
     }
 
     try {
       const db = connect(); // Connect to the database.
-      // Update the user's profile image URL in the database
+      // Update the user's profile information in the database
       await db.query(
-        `UPDATE users SET profile_image_url = $1 WHERE clerk_id = $2`,
-        [profile_image_url, clerk_id]
+        `UPDATE users SET profile_image_url = COALESCE($1, profile_image_url), email = COALESCE($2, email), username = COALESCE($3, username) WHERE clerk_id = $4`,
+        [profile_image_url, email, username, clerk_id]
       );
-      return new Response("User profile image updated", { status: 200 }); // Return a 200 response if the user's profile image URL was successfully updated.
+      return new Response("User profile information updated", { status: 200 }); // Return a 200 response if the user's profile information was successfully updated.
     } catch (error) {
-      console.error("Error updating user profile image in database:", error); // Log any errors that occur while updating the user in the database.
+      console.error(
+        "Error updating user profile information in database:",
+        error
+      ); // Log any errors that occur while updating the user in the database.
       return new Response("Database error", { status: 500 }); // Return a 500 response if there was a database error.
     }
   } else {
