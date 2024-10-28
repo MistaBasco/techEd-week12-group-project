@@ -5,7 +5,7 @@ import connect from "@/utilities/connect";
 export const runtime = "nodejs"; // Specifies the runtime environment for the function. Use 'nodejs' or 'edge' depending on requirements.
 export const preferredRegion = "auto"; // Determines the preferred region for executing the function. 'auto' allows the platform to select the optimal region.
 
-const WEBHOOK_SECRET = process.env.USER_CREATED_WEBHOOK_SECRET; // Fetch the webhook secret from environment variables for verifying incoming webhooks.
+const WEBHOOK_SECRET = process.env.USER_UPDATED_WEBHOOK_SECRET; // Fetch the webhook secret from environment variables for verifying incoming webhooks.
 
 export async function POST(req) {
   // Ensure the WEBHOOK_SECRET is available
@@ -44,22 +44,24 @@ export async function POST(req) {
 
   const { type, data } = evt; // Destructure the event type and data from the verified event object.
 
-  if (type === "user.created") {
-    // Check if the event type is 'user.created'.
-    const { id: clerk_id, email_addresses, username, profile_image_url } = data; // Extract the necessary fields from the event data.
-    const email = email_addresses[0]?.email_address; // Get the user's email address from the list of email addresses.
+  if (type === "user.updated") {
+    // Check if the event type is 'user.updated'.
+    const { id: clerk_id, profile_image_url } = data; // Extract the necessary fields from the event data.
+
+    if (!profile_image_url) {
+      return new Response("No profile image to update", { status: 400 }); // Return a 400 response if there is no profile image to update.
+    }
 
     try {
       const db = connect(); // Connect to the database.
-      // Insert the new user into the database
+      // Update the user's profile image URL in the database
       await db.query(
-        `INSERT INTO users (clerk_id, email, username, profile_image_url)
-         VALUES ($1, $2, $3, $4) ON CONFLICT (email) DO NOTHING`,
-        [clerk_id, email, username || email, profile_image_url] // Use email as username if username is not available.
+        `UPDATE users SET profile_image_url = $1 WHERE clerk_id = $2`,
+        [profile_image_url, clerk_id]
       );
-      return new Response("User added to database", { status: 200 }); // Return a 200 response if the user was successfully added to the database.
+      return new Response("User profile image updated", { status: 200 }); // Return a 200 response if the user's profile image URL was successfully updated.
     } catch (error) {
-      console.error("Error adding user to database:", error); // Log any errors that occur while adding the user to the database.
+      console.error("Error updating user profile image in database:", error); // Log any errors that occur while updating the user in the database.
       return new Response("Database error", { status: 500 }); // Return a 500 response if there was a database error.
     }
   } else {
