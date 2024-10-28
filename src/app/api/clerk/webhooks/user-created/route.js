@@ -46,16 +46,16 @@ export async function POST(req) {
 
   if (type === "user.created") {
     // Check if the event type is 'user.created'.
-    const { id: clerk_id, email_addresses, username } = data; // Extract the necessary fields from the event data.
+    const { id: clerk_id, email_addresses, username, profile_image_url } = data; // Extract the necessary fields from the event data.
     const email = email_addresses[0]?.email_address; // Get the user's email address from the list of email addresses.
 
     try {
       const db = connect(); // Connect to the database.
       // Insert the new user into the database
       await db.query(
-        `INSERT INTO users (clerk_id, email, username)
-         VALUES ($1, $2, $3) ON CONFLICT (email) DO NOTHING`,
-        [clerk_id, email, username || email] // Use email as username if username is not available.
+        `INSERT INTO users (clerk_id, email, username, profile_image_url)
+         VALUES ($1, $2, $3, $4) ON CONFLICT (email) DO NOTHING`,
+        [clerk_id, email, username || email, profile_image_url] // Use email as username if username is not available.
       );
       return new Response("User added to database", { status: 200 }); // Return a 200 response if the user was successfully added to the database.
     } catch (error) {
