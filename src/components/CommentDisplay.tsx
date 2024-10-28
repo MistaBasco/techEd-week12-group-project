@@ -1,6 +1,6 @@
 import getUsernameById from "@/utilities/getUsernameById";
-import Image from "next/image";
 import connect from "@/utilities/connect";
+import CommentCard from "./CommentCard";
 
 export type Comment = {
   comment_id: number;
@@ -28,28 +28,12 @@ export default function CommentDisplay({ comments }: CommentDisplayProps) {
           );
           const profile_image = result.rows[0].profile_image_url;
           return (
-            <div
+            <CommentCard
               key={comment.comment_id}
-              className="flex gap-4 items-start mb-4 border-b pb-4 border-gray-300"
-            >
-              <div className="w-10 h-10">
-                <Image
-                  src={profile_image}
-                  alt="Profile"
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-800">
-                  {username}
-                  {/* TODO add first and last name */}
-                </p>
-
-                <p className="text-sm text-gray-600 mt-1">{comment.body}</p>
-              </div>
-            </div>
+              comment={comment}
+              profile_image={profile_image}
+              username={username}
+            />
           );
         })
       ) : (
