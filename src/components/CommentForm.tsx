@@ -1,5 +1,5 @@
 "use client";
-
+// TODO: Make sure commentForm is wrapped in a collapsible when used!
 import React, { useState } from "react";
 import CommentFormInput from "./CommentFormInput";
 
