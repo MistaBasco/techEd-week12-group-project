@@ -14,6 +14,7 @@ export default async function NavBar() {
       <Link href="/feed">Feed</Link>
       <SignedIn>
         <Link href={`/${await getUsername()}`}>My Profile</Link>
+        {/* TODO change this link when we make the profile page */}
       </SignedIn>
     </nav>
   );
