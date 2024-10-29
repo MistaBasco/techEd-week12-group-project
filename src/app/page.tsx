@@ -1,7 +1,16 @@
+import Splashpage from "@/components/Splashpage";
+import { SignedOut } from "@clerk/nextjs";
+import Link from "next/link";
+
+
+
+
 export default function Home() {
   return (
     <div>
-      {/* Not signed in render splash page, when signed in render homepage */}
+      <SignedOut>
+        <Splashpage/>
+      </SignedOut>
     </div>
   );
 }
