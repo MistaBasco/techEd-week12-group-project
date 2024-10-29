@@ -12,6 +12,7 @@ import { getUserIdByClerkId } from "@/utilities/getUserByClerkId";
 import { SignedIn } from "@clerk/nextjs";
 import CommentSection from "./CommentSection";
 import CommentCounter from "./CommentCounter";
+import LikeCounter from "./LikeCounter";
 
 export default async function ActivityComponent({
   activity,
@@ -68,6 +69,9 @@ export default async function ActivityComponent({
           likeFunc={updateLikes}
           checkIfLiked={checkIfLiked}
         />
+      </SignedIn>
+      <LikeCounter activity_id={activity_id} />
+      <SignedIn>
         <DeleteButton
           deleteFunc={handleDelete}
           postId={activity_id}
