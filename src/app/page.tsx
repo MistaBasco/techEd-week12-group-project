@@ -1,6 +1,5 @@
 import Splashpage from "@/components/Splashpage";
 import { SignedOut } from "@clerk/nextjs";
-import Link from "next/link";
 
 
 
