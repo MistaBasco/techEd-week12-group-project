@@ -11,11 +11,14 @@ import { currentUser } from "@clerk/nextjs/server";
 import { getUserIdByClerkId } from "@/utilities/getUserByClerkId";
 import { SignedIn } from "@clerk/nextjs";
 import CommentSection from "./CommentSection";
+import CommentCounter from "./CommentCounter";
 
 export default async function ActivityComponent({
   activity,
+  showComments = false,
 }: {
   activity: Activity;
+  showComments?: boolean;
 }) {
   const {
     activity_id,
@@ -70,7 +73,11 @@ export default async function ActivityComponent({
           postId={activity_id}
           postType="activity"
         />
-        <CommentSection activity_id={activity_id} />
+        {showComments ? (
+          <CommentSection activity_id={activity_id} />
+        ) : (
+          <CommentCounter activity_id={activity_id} />
+        )}
       </SignedIn>
     </div>
   );
