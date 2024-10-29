@@ -11,6 +11,8 @@ import LikeButton from "./LikeButton";
 import { currentUser } from "@clerk/nextjs/server";
 import { getUserIdByClerkId } from "@/utilities/getUserByClerkId";
 import { SignedIn } from "@clerk/nextjs";
+import { Collapsible } from "@chakra-ui/react";
+import CommentForm from "./CommentForm";
 
 export default async function ActivityComponent({
   activity,
@@ -70,6 +72,15 @@ export default async function ActivityComponent({
           postId={activity_id}
           postType="activity"
         />
+        <Collapsible.Root>
+          <Collapsible.Trigger>Comment on this activity</Collapsible.Trigger>
+          <Collapsible.Content>
+            <CommentForm
+              submitComment={submitComment}
+              activity_id={activity_id}
+            />
+          </Collapsible.Content>
+        </Collapsible.Root>
       </SignedIn>
       <CommentDisplay comments={await getComments(activity_id)} />
     </div>
@@ -87,7 +98,6 @@ export default async function ActivityComponent({
 
 async function handleDelete(postId: number) {
   "use server";
-
   try {
     const db = connect();
     const result = await db.query(
@@ -98,8 +108,26 @@ async function handleDelete(postId: number) {
   } catch (e) {
     console.error(e);
   }
-
   revalidatePath(`/feed`); // TODO change this to current path
+}
+
+async function submitComment(myData: string, activity_id: number) {
+  "use server";
+  try {
+    const db = connect();
+    const myUser = await currentUser();
+    let myUserId;
+    if (myUser) {
+      myUserId = await getUserIdByClerkId(myUser!.id); // todo: use context when available
+    }
+    await db.query(
+      `INSERT INTO comments (body, user_id, activity_id) VALUES ($1, $2, $3)`,
+      [myData, myUserId, activity_id]
+    );
+    return;
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 async function updateLikes(
