@@ -1,5 +1,4 @@
 import { Activity } from "@/app/feed/page";
-import CommentDisplay, { Comment } from "./CommentDisplay";
 import getFilmById from "@/utilities/getFilmById";
 import getUsernameById from "@/utilities/getUsernameById";
 import Timestamp from "./Timestamp";
@@ -11,11 +10,15 @@ import LikeButton from "./LikeButton";
 import { currentUser } from "@clerk/nextjs/server";
 import { getUserIdByClerkId } from "@/utilities/getUserByClerkId";
 import { SignedIn } from "@clerk/nextjs";
+import CommentSection from "./CommentSection";
+import CommentCounter from "./CommentCounter";
 
 export default async function ActivityComponent({
   activity,
+  showComments = false,
 }: {
   activity: Activity;
+  showComments?: boolean;
 }) {
   const {
     activity_id,
@@ -70,24 +73,18 @@ export default async function ActivityComponent({
           postId={activity_id}
           postType="activity"
         />
+        {showComments ? (
+          <CommentSection activity_id={activity_id} />
+        ) : (
+          <CommentCounter activity_id={activity_id} />
+        )}
       </SignedIn>
-      <CommentDisplay comments={await getComments(activity_id)} />
     </div>
   );
-
-  async function getComments(post_id: number) {
-    const db = connect();
-    const result = await db.query<Comment>(
-      `SELECT * FROM comments WHERE activity_id = $1`,
-      [post_id]
-    );
-    return result.rows;
-  }
 }
 
 async function handleDelete(postId: number) {
   "use server";
-
   try {
     const db = connect();
     const result = await db.query(
@@ -98,7 +95,6 @@ async function handleDelete(postId: number) {
   } catch (e) {
     console.error(e);
   }
-
   revalidatePath(`/feed`); // TODO change this to current path
 }
 
