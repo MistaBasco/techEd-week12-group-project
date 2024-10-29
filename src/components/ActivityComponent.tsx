@@ -39,29 +39,33 @@ export default async function ActivityComponent({
     myUserId = await getUserIdByClerkId(myUser!.id); // todo: use context when available
   }
 
+  const filmLink = (
+    <Link className="underline" href={`/films/${film_id}`}>
+      {film.title}
+    </Link>
+  );
+
   // translate activity types to a phrase to display
-  let verb = "";
+  let verb = <></>;
   if (activity_type === "watch") {
-    verb = "watched";
+    verb = <span>watched {filmLink}</span>;
   } else if (activity_type === "wtw") {
-    verb = "added to their want-to-watch list";
+    verb = <span>added {filmLink} to their want-to-watch list</span>;
   } else if (activity_type === "watch_from_wtw") {
-    verb = "watched their wanted film";
+    verb = <span>watched {filmLink} from their want-to-watch list</span>;
   }
 
   return (
-    <div className="relative">
+    <div className="relative bg-slate-400 rounded-xl p-4 m-1">
       <p id={`activity#${activity_id}`}>
-        {username} {verb} {<Link href={`/films/${film_id}`}>{film.title}</Link>}
+        {username} {verb}
       </p>
       <Timestamp timestamp={created_at} />
       {activity_body ? (
         <p>
           {username}: {activity_body}
         </p>
-      ) : (
-        <></>
-      )}
+      ) : null}
       <SignedIn>
         <LikeButton
           postId={activity_id}
