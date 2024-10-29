@@ -1,8 +1,7 @@
-// import LikeButton from "@/components/LikeButton";
-// import CommentDisplay from "@/components/CommentDisplay";
 import connect from "@/utilities/connect";
-// import { revalidatePath } from "next/cache";
 import ActivityComponent from "@/components/ActivityComponent";
+import { getUserIdByClerkId } from "@/utilities/getUserByClerkId";
+import { currentUser } from "@clerk/nextjs/server";
 
 export type Activity = {
   activity_id: number;
@@ -13,7 +12,11 @@ export type Activity = {
   created_at: Date;
 };
 
-export default async function Feed() {
+export default async function Feed({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   async function getActivities(): Promise<Activity[]> {
     const db = connect();
     const result = await db.query<Activity>(
@@ -22,13 +25,39 @@ export default async function Feed() {
     return result.rows;
   }
 
+  async function getFollowedActivities(): Promise<Activity[]> {
+    const db = connect();
+
+    const myUser = await currentUser();
+    let myUserId;
+    if (myUser) {
+      myUserId = await getUserIdByClerkId(myUser!.id); // todo: use context when available
+    }
+
+    const result = await db.query<Activity>(
+      `SELECT activity_id, user_id, film_id, activity_body, activity_type, activities.created_at FROM follows INNER JOIN activities ON followed_id = user_id WHERE follower_id = $1;`,
+      [myUserId]
+    );
+    return result.rows;
+  }
+
+  const showFollowingOnly =
+    (await searchParams).following === "true" ? true : false;
+
   return (
     <>
-      {(await getActivities()).map((element) => {
-        return (
-          <ActivityComponent key={element.activity_id} activity={element} />
-        );
-      })}
+      {showFollowingOnly
+        ? (await getFollowedActivities()).map((element) => {
+            return (
+              <ActivityComponent key={element.activity_id} activity={element} />
+            );
+          })
+        : (await getActivities()).map((element) => {
+            return (
+              <ActivityComponent key={element.activity_id} activity={element} />
+            );
+          })}
+      {}
     </>
   );
 }
