@@ -6,8 +6,6 @@ type FilmGalleryProps = {
 };
 
 export default function FilmGallery({ filmList }: FilmGalleryProps) {
-
-
   return (
     <div className="flex flex-wrap justify-center">
       {filmList.map((film) => (

@@ -1,6 +1,5 @@
 import FilmGallery from "@/components/FilmGallery";
 import getAllFilms from "@/utilities/getAllFilms";
-import { Film } from "@/utilities/getFilmById";
 
 export default async function AllFilmsPage() {
   // Get all films from database

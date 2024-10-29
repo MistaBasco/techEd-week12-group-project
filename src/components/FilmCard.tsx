@@ -51,7 +51,7 @@ export default function FilmCard({ film }: FilmCardProps) {
             Add to Favorites
           </button>
           <Link href={`/films/${film.film_id}`}>
-            <p className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
+            <p className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 text-center">
               View Details
             </p>
           </Link>

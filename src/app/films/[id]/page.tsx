@@ -1,26 +1,26 @@
 import getFilmById from "@/utilities/getFilmById";
 import FilmCard from "@/components/FilmCard";
-import { Film } from "@/utilities/getFilmById";
+import { notFound } from "next/navigation";
 
-interface FilmPageProps {
-  params: {
+type FilmPageProps = {
+  params: Promise<{
     id: string;
-  };
-}
+  }>;
+};
 
 export default async function FilmPage({ params }: FilmPageProps) {
-  const filmId = Number(params.id);
+  const filmId = Number((await params).id);
 
   // Get film server side
   const film = await getFilmById(filmId);
 
   if (!film) {
-    return <div>Film not found</div>;
+    notFound();
   }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
-      <FilmCard films={film} />
+      <FilmCard film={film} />
     </div>
   );
 }
