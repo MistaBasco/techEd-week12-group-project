@@ -4,6 +4,7 @@ import getFilmById from "@/utilities/getFilmById";
 import getUsernameById from "@/utilities/getUsernameById";
 import Timestamp from "./Timestamp";
 import connect from "@/utilities/connect";
+import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import DeleteButton from "./DeleteButton";
 import LikeButton from "./LikeButton";
@@ -47,7 +48,7 @@ export default async function ActivityComponent({
   return (
     <div className="relative">
       <p id={`activity#${activity_id}`}>
-        {username} {verb} {film.title}
+        {username} {verb} {<Link href={`/films/${film_id}`}>{film.title}</Link>}
       </p>
       <Timestamp timestamp={created_at} />
       {activity_body ? (
