@@ -14,6 +14,7 @@ export default function CommentFormInput({
   return (
     <input
       placeholder={placeholder}
+      name="comment"
       onChange={onChange}
       value={value}
       className="p-4 rounded-md hover:shadow-lg hover:shadow-black"
