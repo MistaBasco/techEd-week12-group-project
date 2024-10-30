@@ -1,71 +1,55 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, ButtonProps } from "@chakra-ui/react";
-import connect from "@/utilities/connect";
-import toggleWatchlist from "@/utilities/toggleWatchList";
 
 type WatchlistButtonProps = {
-  userId: number;
   filmId: number;
 };
 
-export default function WatchlistButton({
-  userId,
-  filmId,
-  ...rest
-}: WatchlistButtonProps & ButtonProps) {
-  const [inWatchlist, setInWatchlist] = useState<boolean | null>(null);
-  const db = connect(); // Get the database pool instance once
+export default function WatchlistButton(
+  props: WatchlistButtonProps & ButtonProps
+) {
+  const { filmId } = props;
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<"added" | "removed" | null>(null);
 
-  useEffect(() => {
-    // Check if the film is already in the user's watchlist
-    const checkWatchlistStatus = async () => {
-      try {
-        const checkQuery = `
-          SELECT 1 
-          FROM wtw_films
-          WHERE user_id = $1 AND film_id = $2;
-        `;
-        const result = await db.query(checkQuery, [userId, filmId]);
-
-        // Add null/undefined safety check
-        if (
-          result?.rowCount !== null &&
-          result?.rowCount !== undefined &&
-          result.rowCount > 0
-        ) {
-          setInWatchlist(true);
-        } else {
-          setInWatchlist(false);
-        }
-      } catch (error) {
-        console.error("Error fetching watchlist status:", error);
-      }
-    };
-    checkWatchlistStatus();
-  }, [userId, filmId]); // eslint-disable-next-line react-hooks/exhaustive-deps
-
-  const handleToggle = async () => {
+  async function handleToggleWatchlist() {
+    setLoading(true);
     try {
-      await toggleWatchlist({ userId, filmId });
-      setInWatchlist((prev) => !prev); // Toggle the local state
-    } catch (error) {
-      console.error("Error toggling watchlist:", error);
-    }
-  };
+      const response = await fetch("/api/toggle-wtw", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ filmId }),
+      });
+      if (!response.ok) {
+        console.error("Request failed with status:", response.status);
+        setStatus(null);
+        return;
+      }
 
-  if (inWatchlist === null) {
-    return (
-      <Button disabled {...rest}>
-        Loading...
-      </Button>
-    );
+      const data = await response.json();
+      if (data && data.message) {
+        setStatus(data.message.includes("added") ? "added" : "removed");
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <Button onClick={handleToggle} {...rest}>
-      {inWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
+    <Button onClick={handleToggleWatchlist} colorScheme="teal">
+      {loading
+        ? "Loading..."
+        : status === "added"
+        ? "Remove from Watchlist"
+        : "Add to Watchlist"}
     </Button>
   );
 }
