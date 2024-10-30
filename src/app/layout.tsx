@@ -13,7 +13,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ClerkProvider>
+        <ClerkProvider dynamic>
           <Provider>
             <Header />
             {children}

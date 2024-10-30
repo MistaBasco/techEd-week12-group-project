@@ -12,6 +12,7 @@ export default async function toggleWatchedList({
   const db = connect();
 
   try {
+    await db.query("BEGIN");
     // Step 1: Check if the film is in the watched list
     const watchedCheckQuery = `
       SELECT 1 
@@ -19,6 +20,8 @@ export default async function toggleWatchedList({
       WHERE user_id = $1 AND film_id = $2;
     `;
     const watchedResult = await db.query(watchedCheckQuery, [userId, filmId]);
+
+    let action: "added to watched" | "removed from watched"; //resume
 
     if (
       watchedResult?.rowCount !== null &&
@@ -31,6 +34,7 @@ export default async function toggleWatchedList({
         WHERE user_id = $1 AND film_id = $2;
       `;
       await db.query(deleteWatchedQuery, [userId, filmId]);
+      action = "removed from watched";
       console.log("Film removed from watched list.");
     } else {
       // Step 2: Check if the film is in the want-to-watch (wtw) list
@@ -53,18 +57,31 @@ export default async function toggleWatchedList({
         `;
         await db.query(deleteWtwQuery, [userId, filmId]);
         console.log("Film removed from want-to-watch list.");
-      }
 
-      // Add the film to the watched list
-      const insertWatchedQuery = `
+        const insertWatchedQuery = `
         INSERT INTO watched_films (user_id, film_id)
         VALUES ($1, $2);
       `;
-      await db.query(insertWatchedQuery, [userId, filmId]);
-      console.log("Film added to watched list.");
+        await db.query(insertWatchedQuery, [userId, filmId]);
+        action = "added to watched";
+        console.log("Film added to watched list.");
+      } else {
+        // Add the film to the watched list
+        const insertWatchedQuery = `
+        INSERT INTO watched_films (user_id, film_id)
+        VALUES ($1, $2);
+      `;
+        await db.query(insertWatchedQuery, [userId, filmId]);
+        action = "added to watched";
+        console.log("Film added to watched list.");
+      }
     }
+
+    await db.query("COMMIT");
+    return action;
   } catch (err) {
+    await db.query("ROLLBACK");
     console.error("Error toggling film in watched list:", err);
-    throw new Error("Could not toggle film in watched list.");
+    throw new Error("Failed to toggle watched status");
   }
 }

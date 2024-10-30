@@ -13,6 +13,7 @@ import { SignedIn } from "@clerk/nextjs";
 import CommentSection from "./CommentSection";
 import CommentCounter from "./CommentCounter";
 import LikeCounter from "./LikeCounter";
+import FollowButton from "./FollowButton";
 
 export default async function ActivityComponent({
   activity,
@@ -83,6 +84,7 @@ export default async function ActivityComponent({
             postType="activity"
           />
         </div>
+        <FollowButton user_id={user_id} />
         {showComments ? (
           <CommentSection activity_id={activity_id} />
         ) : (
