@@ -56,7 +56,7 @@ export default async function ActivityComponent({
   }
 
   return (
-    <div className="relative bg-slate-400 rounded-xl p-4 m-1">
+    <div className="bg-slate-400 rounded-xl p-4 m-1">
       <p id={`activity#${activity_id}`}>
         {username} {verb}
       </p>
@@ -76,11 +76,13 @@ export default async function ActivityComponent({
       </SignedIn>
       <LikeCounter activity_id={activity_id} />
       <SignedIn>
-        <DeleteButton
-          deleteFunc={handleDelete}
-          postId={activity_id}
-          postType="activity"
-        />
+        <div className="relative w-full h-full">
+          <DeleteButton
+            deleteFunc={handleDelete}
+            postId={activity_id}
+            postType="activity"
+          />
+        </div>
         {showComments ? (
           <CommentSection activity_id={activity_id} />
         ) : (

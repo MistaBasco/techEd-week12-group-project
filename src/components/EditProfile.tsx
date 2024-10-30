@@ -1,3 +1,4 @@
+"use client";
 import { FormEvent } from "react";
 import { Input, Textarea } from "@chakra-ui/react";
 import { updateProfile } from "@/utilities/updateProfile";
