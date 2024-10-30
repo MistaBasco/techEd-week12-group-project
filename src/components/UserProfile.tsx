@@ -3,6 +3,8 @@ import { Box, Button, Heading, VStack, Text, Image } from "@chakra-ui/react";
 import { Tabs } from "@chakra-ui/react";
 import { useState } from "react";
 import { LuUser, LuFolder, LuCheckSquare } from "react-icons/lu"; 
+import EditProfile from "./EditProfile";
+
 
 export default function UserProfile() {
   const [username] = useState<string>("UserName");
@@ -58,7 +60,7 @@ export default function UserProfile() {
           <VStack align="start">
             <Heading size="sm" mt={4}>Edit Your Profile</Heading>
             <Text mt={2}>Here, users can edit their profile information. ADD FORM HERE</Text>
-            {/* Add form here */}
+            <EditProfile/>
           </VStack>
         </Tabs.Content>
 
