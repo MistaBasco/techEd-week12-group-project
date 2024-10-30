@@ -7,7 +7,7 @@ export type Film = {
   overview?: string;
   poster_path?: string;
   vote_average: number;
-  release_year: number;
+  release_year?: number;
   created_at: Date;
   updated_at: Date;
 };
