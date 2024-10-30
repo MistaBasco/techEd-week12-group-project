@@ -1,11 +1,12 @@
 import { Button, Flex, Box, Text, AspectRatio } from "@chakra-ui/react";
 import Head from "next/head";
 import Image from "next/image";
-import connect from "@/utilities/connect";
-import { Pool } from "pg";
-import { GetServerSideProps } from "next";
 
-export default function SplashPage({ posterPath }: { posterPath: string }) {
+interface SplashPageProps {
+  posterPath: string;
+}
+
+export default function SplashPage({ posterPath }: SplashPageProps) {
   return (
     <>
       <Head>
@@ -83,10 +84,10 @@ export default function SplashPage({ posterPath }: { posterPath: string }) {
           >
             <AspectRatio ratio={2 / 3} w="100%">
               <Image
-                src={posterPath}
+                src={posterPath ? posterPath : "/placeholder.png"}
                 alt="Film Poster"
-                layout="fill"
-                objectFit="cover"
+                fill
+                style={{ objectFit: "cover" }}
               />
             </AspectRatio>
           </Box>
@@ -95,86 +96,3 @@ export default function SplashPage({ posterPath }: { posterPath: string }) {
     </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  let db: Pool | undefined;
-
-  try {
-    db = connect();
-
-    await db.query("BEGIN");
-
-    // get ids for poster_path not null
-    const idRangeResult = await db.query<{
-      min_id: number | null;
-      max_id: number | null;
-    }>(
-      "SELECT MIN(id) AS min_id, MAX(id) AS max_id FROM films WHERE poster_path IS NOT NULL"
-    );
-
-    const minId = idRangeResult.rows[0].min_id;
-    const maxId = idRangeResult.rows[0].max_id;
-
-    if (minId === null || maxId === null) {
-      // no films with poster_path found
-      await db.query("COMMIT");
-      return {
-        props: {
-          posterPath: "/placeholder.png",
-        },
-      };
-    }
-
-    let posterPath: string | null = null;
-    let attempts = 0;
-    const maxAttempts = 10;
-
-    while (!posterPath && attempts < maxAttempts) {
-      attempts++;
-
-      // make random id between minId and maxId
-      const randomId = Math.floor(Math.random() * (maxId - minId + 1)) + minId;
-
-      // try to fetch the film with the random ID
-      const filmResult = await db.query<{ poster_path: string }>(
-        "SELECT poster_path FROM films WHERE id = $1 AND poster_path IS NOT NULL",
-        [randomId]
-      );
-
-      if (filmResult.rows.length > 0) {
-        posterPath = filmResult.rows[0].poster_path;
-      }
-    }
-
-    await db.query("COMMIT");
-
-    if (!posterPath) {
-      // could not find a film after maxAttempts
-      return {
-        props: {
-          posterPath: "/placeholder.png",
-        },
-      };
-    }
-
-    return {
-      props: {
-        posterPath,
-      },
-    };
-  } catch (error) {
-    if (db) {
-      await db.query("ROLLBACK");
-    }
-    console.error("Error fetching film poster soz", error);
-    return {
-      props: {
-        posterPath: "/placeholder.png",
-      },
-    };
-  } finally {
-    if (db) {
-      await db.end();
-    }
-  }
-};
