@@ -15,7 +15,7 @@ export default async function CommentSection({
     <section className="bg-gray-50 p-4 rounded-lg shadow-md space-y-4">
       <SignedIn>
         <Collapsible.Root>
-          <Collapsible.Trigger className="text-blue-600 font-semibold cursor-pointer hover:underline transition duration-150 ease-in-out hover:text-blue-700">
+          <Collapsible.Trigger className="text-blue-600 font-semibold cursor-pointer hover:underline">
             Comment on this activity
           </Collapsible.Trigger>
           <Collapsible.Content className="mt-4">
