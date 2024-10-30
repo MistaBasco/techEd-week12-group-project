@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import CommentFormInput from "./CommentFormInput";
+import { Button } from "@chakra-ui/react";
 
 export default function PostComment({
   submitComment,
@@ -50,22 +51,26 @@ export default function PostComment({
       <form
         method="POST"
         onSubmit={handleSubmit}
-        className="flex flex-col bg-slate-400 p-16 gap-[13px]"
+        className="flex flex-col bg-white p-6 rounded-lg shadow-md space-y-4"
       >
         <CommentFormInput
           onChange={handleChange}
-          placeholder="Enter comment here"
+          placeholder="Enter your comment..."
           value={formData.comment}
         />
-        <button
+        <Button
           type="submit"
-          className={`rounded p-4 ${
-            formData.comment.length < 1 ? "bg-slate-500" : "bg-green-500"
-          }`}
-          disabled={isSubmitting || formData.comment.length < 1}
+          colorScheme="blue"
+          size="md"
+          fontWeight="bold"
+          w="full"
+          _hover={{ bg: "blue.600", transform: "scale(1.03)" }}
+          transition="transform 0.2s ease-in-out, background-color 0.2s"
+          // isLoading={isSubmitting}
+          disabled={formData.comment.length < 1}
         >
           {isSubmitting ? "Submitting..." : "Submit"}
-        </button>
+        </Button>
       </form>
     </>
   );

@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
+import { IconButton} from "@chakra-ui/react";
+import { FaThumbsUp, FaRegThumbsUp  } from "react-icons/fa"
 
 type LikeButtonProps = {
   postId: number;
@@ -40,7 +42,7 @@ export default function LikeButton({
 
   return (
     <div>
-      <button onClick={handleClick}>{hasLiked ? "Liked" : "Like"}</button>
+      <IconButton onClick={handleClick} >{hasLiked ? <FaThumbsUp/> : <FaRegThumbsUp/>}</IconButton>
     </div>
   );
 }
