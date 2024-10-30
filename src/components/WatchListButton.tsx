@@ -5,14 +5,13 @@ import { Button, ButtonProps } from "@chakra-ui/react";
 
 type WatchlistButtonProps = {
   filmId: number;
-};
+  isInWatchlist: boolean;
+  onStatusChange: (status: "added" | "removed") => void;
+} & ButtonProps;
 
-export default function WatchlistButton(
-  props: WatchlistButtonProps & ButtonProps
-) {
-  const { filmId } = props;
+export default function WatchlistButton(props: WatchlistButtonProps) {
+  const { filmId, isInWatchlist, onStatusChange, ...buttonProps } = props;
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<"added" | "removed" | null>(null);
 
   async function handleToggleWatchlist() {
     setLoading(true);
@@ -26,16 +25,12 @@ export default function WatchlistButton(
       });
       if (!response.ok) {
         console.error("Request failed with status:", response.status);
-        setStatus(null);
         return;
       }
 
       const data = await response.json();
-      if (data && data.message) {
-        setStatus(data.message.includes("added") ? "added" : "removed");
-      } else {
-        console.error(data.message);
-      }
+      const newStatus = data.message.includes("added") ? "added" : "removed";
+      onStatusChange(newStatus);
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -44,10 +39,10 @@ export default function WatchlistButton(
   }
 
   return (
-    <Button onClick={handleToggleWatchlist} colorScheme="teal">
+    <Button onClick={handleToggleWatchlist} variant="outline" {...buttonProps}>
       {loading
         ? "Loading..."
-        : status === "added"
+        : isInWatchlist
         ? "Remove from Watchlist"
         : "Add to Watchlist"}
     </Button>
