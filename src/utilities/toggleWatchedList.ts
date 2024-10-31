@@ -66,16 +66,6 @@ export default async function toggleWatchedList({
         action = "added to watched";
         console.log("Film added to watched list.");
       }
-      //  else {
-      //   // Add the film to the watched list
-      //   const insertWatchedQuery = `
-      //   INSERT INTO watched_films (user_id, film_id)
-      //   VALUES ($1, $2);
-      // `;
-      //   await db.query(insertWatchedQuery, [userId, filmId]);
-      //   action = "added to watched";
-      //   console.log("Film added to watched list.");
-      // }
     }
 
     if (action === "added to watched") {

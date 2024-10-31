@@ -12,7 +12,6 @@ export async function POST(req: NextRequest) {
       filmId,
       activityType,
     });
-    // const { userId: clerkId } = await auth();
     const clerkId = postUserId;
     const user = await auth();
     console.log("ClerkId : " + clerkId);

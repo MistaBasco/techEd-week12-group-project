@@ -31,9 +31,9 @@ export default function About() {
         <Text fontSize="lg" mb={4}>
           Our team? Just a bunch of overly caffeinated movie nerds who could
           tell you the exact frame count of every classic film... if you asked.
-          So please, dive in, click around, and let’s get you set up with your
-          next binge session. Who knows? By the time you leave, you might even
-          find a new all-time favorite (or five). Happy scrolling!
+          So please, dive in, click around, and let&apos;s get you set up with
+          your next binge session. Who knows? By the time you leave, you might
+          even find a new all-time favorite (or five). Happy scrolling!
         </Text>
       </Box>
     </Box>

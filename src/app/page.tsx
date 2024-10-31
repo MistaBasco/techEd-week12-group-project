@@ -83,7 +83,7 @@ export default async function Home() {
             />
 
             {/* --------------- Features Section----------------- */}
-            <Box textAlign="center" mb={8}>
+            <Box textAlign="center" mb={8} className="text-white">
               <Text fontSize="lg" fontWeight="bold" mb={4}>
                 Filum lets you:
               </Text>

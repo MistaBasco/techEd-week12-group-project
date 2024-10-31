@@ -18,7 +18,7 @@ export default function Header() {
       {/* -----------------Navigation Links ---------------*/}
       <NavBar />
       <SearchBar />
-      {/* --------------Centered Search Bar----------------- */}
+      {/* spacer */}
       <div className="flex-1 px-4"></div>
       {/*-------------- Authentication Links----------------- */}
       <div className="flex items-center gap-4">

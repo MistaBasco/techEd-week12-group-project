@@ -70,8 +70,6 @@ export default async function UserProfile({ user_id }: { user_id: number }) {
       minH="100vh"
       align="center"
       justify="center"
-      // bgImage="url('/background3.jpg')"
-
       bgRepeat="no-repeat"
       bgSize="cover"
       px={4}

@@ -1,7 +1,5 @@
 import { Pool } from "pg";
-import dotenv from "dotenv";
 
-dotenv.config();
 let db: Pool;
 
 export default function connect(): Pool {

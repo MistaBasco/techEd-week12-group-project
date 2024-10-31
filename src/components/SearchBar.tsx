@@ -20,7 +20,6 @@ export type TMDBFilm = {
 export default function SearchBar() {
   const [query, setQuery] = useState<string>("");
   const [films, setFilms] = useState<Film[]>([]);
-  // const [error, setError] = useState<string | null>(null);
 
   const searchFilms = async (searchTerms: string) => {
     const result = await searchTMDB(searchTerms);
@@ -66,11 +65,6 @@ export default function SearchBar() {
           />
         </InputGroup>
       </HStack>
-      {/* {error && (
-        <Text color="red.500" mt={4}>
-          {error}
-        </Text>
-      )} */}
       {films.length > 0 ? (
         <div className="absolute bg-slate-50 text-black p-1">
           {films.map((film) => (

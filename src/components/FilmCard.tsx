@@ -15,7 +15,6 @@ type FilmCardProps = {
 };
 
 export default function FilmCard({ film }: FilmCardProps) {
-  // console.log("FilmCard film data:", film);
   const [isInWatchlist, setIsInWatchlist] = useState(false);
   const [isWatched, setIsWatched] = useState(false);
   const { userId: clerkId } = useAuth();
@@ -92,10 +91,6 @@ export default function FilmCard({ film }: FilmCardProps) {
           </span>
         </div>
         <Grid>
-          {/* <div className="mt-4 px-2 flex justify-between"> */}
-          {/* <button className="bg-green-500 text-white py-2 px-4 mr-2 rounded-md hover:bg-green-600">
-            Add to Favorites
-          </button> */}
           {userId && (
             <>
               <WatchlistButton
@@ -115,7 +110,6 @@ export default function FilmCard({ film }: FilmCardProps) {
               View Details
             </p>
           </Link>
-          {/* </div> */}
         </Grid>
       </div>
     </div>
