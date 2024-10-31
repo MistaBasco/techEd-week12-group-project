@@ -48,7 +48,7 @@ export default function SearchBar() {
   }
 
   return (
-    <Box p={4} maxW="lg" mx="auto">
+    <Box maxW="lg" mx="auto">
       <HStack alignItems="center">
         <InputGroup startElement={<LuSearch />}>
           <Input

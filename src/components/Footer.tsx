@@ -13,7 +13,7 @@ export default function Footer() {
       className="bg-slate-700"
     >
       <Text fontSize="sm" mb={2}>
-        Overrated - The Film Social Media App
+        Filum - The Film Social Media App
       </Text>
       <Flex gap={4}>
         <Link href="/about" _hover={{ color: "yellow.300" }}>

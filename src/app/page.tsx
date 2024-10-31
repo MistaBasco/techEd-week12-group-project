@@ -85,7 +85,7 @@ export default async function Home() {
             {/* --------------- Features Section----------------- */}
             <Box textAlign="center" mb={8}>
               <Text fontSize="lg" fontWeight="bold" mb={4}>
-                Overrated lets you:
+                Filum lets you:
               </Text>
               <Flex justify="center" gap={8}>
                 <Box textAlign="center">

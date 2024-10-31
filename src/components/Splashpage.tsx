@@ -1,6 +1,7 @@
 import { Button, Flex, Box, Text, AspectRatio } from "@chakra-ui/react";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 
 interface SplashPageProps {
   posterPath: string;
@@ -47,7 +48,13 @@ export default function SplashPage({ posterPath }: SplashPageProps) {
           }}
         >
           {/* welcome text */}
-          <Box flex="1" p={6} color="white" position="relative">
+          <Box
+            flex="1"
+            p={6}
+            color="white"
+            position="relative"
+            className="font-chakra"
+          >
             <Text
               fontSize={{ base: "3xl", md: "4xl" }}
               fontWeight="bold"
@@ -67,9 +74,10 @@ export default function SplashPage({ posterPath }: SplashPageProps) {
               rounded="full"
               bgGradient="linear(to-r, teal.400, blue.500)"
               color="white"
+              variant="outline"
               _hover={{ bgGradient: "linear(to-r, blue.500, teal.400)" }}
             >
-              Learn More
+              <Link href="/sign-up">Sign Up To See More</Link>
             </Button>
           </Box>
 
