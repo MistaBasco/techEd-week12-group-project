@@ -3,6 +3,7 @@ import ActivityComponent from "@/components/ActivityComponent";
 import { Box, VStack, Flex, Heading } from "@chakra-ui/react";
 import { getUserIdByClerkId } from "@/utilities/getUserByClerkId";
 import { currentUser } from "@clerk/nextjs/server";
+import Link from "next/link";
 
 export type Activity = {
   activity_id: number;
@@ -36,7 +37,7 @@ export default async function Feed({
     }
 
     const result = await db.query<Activity>(
-      `SELECT activity_id, user_id, film_id, activity_body, activity_type, activities.created_at FROM follows INNER JOIN activities ON followed_id = user_id WHERE follower_id = $1;`,
+      `SELECT activity_id, user_id, film_id, activity_body, activity_type, activities.created_at FROM follows INNER JOIN activities ON followed_id = user_id WHERE follower_id = $1 ORDER BY created_at DESC`,
       [myUserId]
     );
     return result.rows;
@@ -45,8 +46,26 @@ export default async function Feed({
   const showFollowingOnly =
     (await searchParams).following === "true" ? true : false;
 
+  function ActivityBox({ activity }: { activity: Activity }) {
+    return (
+      <Box
+        p={6}
+        bg="rgba(50, 50, 50, 0.85)"
+        borderRadius="2xl"
+        border="1px solid rgba(255, 255, 255, 0.2)"
+        boxShadow="0px 4px 20px rgba(0, 0, 0, 0.2)"
+        backdropFilter="blur(8px)" // Applies blur effect
+        w="100%"
+        maxW="80vw"
+      >
+        <ActivityComponent activity={activity} />
+      </Box>
+    );
+  }
+
   return (
     <Flex
+      direction="column"
       minH="100vh"
       justify="center"
       align="center"
@@ -55,38 +74,33 @@ export default async function Feed({
       overflowY="auto"
       w="full"
     >
-      <VStack w="90%" maxW="900px" py={8} gap={6}>
-        <Heading size="lg" color="whiteAlpha.900" mb={4}></Heading>
+      <Heading size="lg" color="whiteAlpha.900" mt="2">
+        {showFollowingOnly
+          ? "Showing activities from people you follow"
+          : "Showing all activities"}
+      </Heading>
+      {showFollowingOnly ? (
+        <Link href="/feed" className="font-chakra">
+          Show all activities
+        </Link>
+      ) : (
+        <Link href="/feed?following=true" className="font-chakra">
+          Show activities from people I follow
+        </Link>
+      )}
+      <VStack w="90%" maxW="900px" py={4} gap={6}>
         {showFollowingOnly
           ? (await getFollowedActivities()).map((element) => (
-              <Box
+              <ActivityBox
                 key={element.activity_id}
-                p={6}
-                bg="rgba(50, 50, 50, 0.85)"
-                borderRadius="2xl"
-                border="1px solid rgba(255, 255, 255, 0.2)"
-                boxShadow="0px 4px 20px rgba(0, 0, 0, 0.2)"
-                backdropFilter="blur(8px)" // Applies blur effect
-                w="100%"
-                maxW="80vw"
-              >
-                <ActivityComponent activity={element} />
-              </Box>
+                activity={element}
+              ></ActivityBox>
             ))
           : (await getActivities()).map((element) => (
-              <Box
+              <ActivityBox
                 key={element.activity_id}
-                p={6}
-                bg="rgba(50, 50, 50, 0.85)"
-                borderRadius="2xl"
-                border="1px solid rgba(255, 255, 255, 0.2)"
-                boxShadow="0px 4px 20px rgba(0, 0, 0, 0.2)"
-                backdropFilter="blur(8px)" // Applies blur effect
-                w="100%"
-                maxW="80vw"
-              >
-                <ActivityComponent activity={element} />
-              </Box>
+                activity={element}
+              ></ActivityBox>
             ))}
       </VStack>
     </Flex>

@@ -5,7 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Provider } from "@/components/ui/provider";
 
 export const metadata: Metadata = {
-  title: "Overrated Final Project",
+  title: "Filum",
 };
 
 export default function RootLayout(props: { children: React.ReactNode }) {
