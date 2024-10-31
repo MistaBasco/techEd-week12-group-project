@@ -123,10 +123,10 @@ export default function Home() {
             About
           </Link>
           <Link href="/contact" _hover={{ color: "yellow.300" }}>
-            Contact
+            Contact Us
           </Link>
-          <Link href="/social" _hover={{ color: "yellow.300" }}>
-            Social
+          <Link href="/links" _hover={{ color: "yellow.300" }}>
+            Links
           </Link>
         </Flex>
       </Flex>
