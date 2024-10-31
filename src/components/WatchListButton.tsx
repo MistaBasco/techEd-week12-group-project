@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button, ButtonProps } from "@chakra-ui/react";
+import { useUser } from "@clerk/nextjs";
 
 type WatchlistButtonProps = {
   filmId: number;
@@ -12,6 +13,11 @@ type WatchlistButtonProps = {
 export default function WatchlistButton(props: WatchlistButtonProps) {
   const { filmId, isInWatchlist, onStatusChange, ...buttonProps } = props;
   const [loading, setLoading] = useState(false);
+  const { user } = useUser();
+  let postUserId = "0";
+  if (user) {
+    postUserId = user.id;
+  }
 
   async function handleToggleWatchlist() {
     setLoading(true);
@@ -31,16 +37,17 @@ export default function WatchlistButton(props: WatchlistButtonProps) {
       const data = await response.json();
       const newStatus = data.message.includes("added") ? "added" : "removed";
       onStatusChange(newStatus);
-      if (response.ok) {
+      if (response.ok && newStatus === "added") {
         // Log activity when a film is added/removed from watched list
-        await fetch("/api/log-activity", {
+        await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/log-activity`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             filmId,
-            activityType: newStatus === "added" ? "wtw" : "remove_wtw",
+            postUserId,
+            activityType: "wtw",
           }),
         });
       }
