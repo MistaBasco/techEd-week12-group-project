@@ -9,8 +9,9 @@ export default function Contact() {
       </Heading>
       <Text fontSize="lg" mb={6}>
         We need friends... please add us! Whether you have questions, movie
-        recommendations, or just want to chat about the latest releases, we're
-        here for it. Reach out, we’re ready to pretend we’re cool.
+        recommendations, or just want to chat about the latest releases,
+        we&apos;re here for it. Reach out, we&apos;re ready to pretend
+        we&apos;re cool.
       </Text>
 
       <div
@@ -26,8 +27,8 @@ export default function Contact() {
           <strong>Address:</strong> 123 Movie Lane, Cine City, Filmville 90210
         </p>
         <p style={{ marginBottom: "1rem" }}>
-          <strong>Office Hours:</strong> Mon-Fri, 9am - 5pm (or whenever we’re
-          done rewatching our favorite movies)
+          <strong>Office Hours:</strong> Mon-Fri, 9am - 5pm (or whenever
+          we&apos;re done rewatching our favorite movies)
         </p>
       </div>
     </Box>

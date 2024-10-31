@@ -19,10 +19,10 @@ export default function About() {
           About Us
         </Heading>
         <Text fontSize="lg" mb={4}>
-          Welcome to our humble corner of the internet! Here at "Website Name,"
-          we believe that scrolling endlessly for movies to watch (and then
-          watching the same comfort movie again) is a lifestyle, not a choice.
-          So, we made it our mission to help you dive deep, discover new
+          Welcome to our humble corner of the internet! Here at &quot;Website
+          Name,&quot; we believe that scrolling endlessly for movies to watch
+          (and then watching the same comfort movie again) is a lifestyle, not a
+          choice. So, we made it our mission to help you dive deep, discover new
           favorites, and maybe even remember what you wanted to watch in the
           first place. With features that are both “cool” and “vaguely useful,”
           our site is a one-stop-shop for movie fans, snack enthusiasts, and
