@@ -1,4 +1,3 @@
-import getUsernameById from "@/utilities/getUsernameById";
 import connect from "@/utilities/connect";
 import CommentCard from "./CommentCard";
 
@@ -22,12 +21,16 @@ export default function CommentDisplay({ comments }: CommentDisplayProps) {
       </h3>
       {comments.length > 0 ? (
         comments.map(async (comment: Comment) => {
-          const username = await getUsernameById(comment.user_id);
           const db = connect();
-          const result = await db.query<{ profile_image_url: string }>(
-            `SELECT profile_image_url FROM users WHERE user_id = $1`,
+          // get username and profile picture
+          const result = await db.query<{
+            username: string;
+            profile_image_url: string;
+          }>(
+            `SELECT username, profile_image_url FROM users WHERE user_id = $1`,
             [comment.user_id]
           );
+          const username = result.rows[0].username;
           const profile_image = result.rows[0].profile_image_url;
           return (
             <CommentCard

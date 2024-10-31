@@ -8,34 +8,62 @@ import getUsernameById from "@/utilities/getUsernameById";
 import { Film } from "@/utilities/getFilmById";
 import connect from "@/utilities/connect";
 import FilmGallery from "./FilmGallery";
+import { notFound } from "next/navigation";
+import FollowList from "./FollowList";
 
+// data from watched_list and wtw_list
 type FilmListEntry = {
   user_id: number;
   film_id: number;
   created_at: Date;
 };
 
-export default async function UserProfile() {
+export default async function UserProfile({ user_id }: { user_id: number }) {
   const myUser = await currentUser();
   const myUserId = myUser ? await getUserIdByClerkId(myUser!.id) : null;
-  const username = myUserId ? await getUsernameById(myUserId) : null;
+  let userOwnsThisProfile = false;
+  if (myUserId === user_id) {
+    userOwnsThisProfile = true;
+  }
+
+  let username: string;
+  // check if the user_id corresponds to a real user, else boot us out to not-found page
+  try {
+    username = await getUsernameById(user_id);
+  } catch (error) {
+    console.log(error);
+    notFound();
+  }
+
   const db = connect();
 
   async function getAllFilmsFromList(list: string): Promise<Film[]> {
     if (list === "wtw") {
       const result = await db.query<FilmListEntry & Film>(
         `SELECT * FROM wtw_films INNER JOIN films ON wtw_films.film_id = films.film_id WHERE user_id = $1`,
-        [myUserId]
+        [user_id]
       );
       return result.rows;
     } else if (list === "watched") {
       const result = await db.query<FilmListEntry & Film>(
         `SELECT * FROM watched_films INNER JOIN films ON watched_films.film_id = films.film_id WHERE user_id = $1`,
-        [myUserId]
+        [user_id]
       );
       return result.rows;
     } else {
       return [];
+    }
+  }
+
+  async function getProfilePic(user_id: number): Promise<string> {
+    const result = await db.query(
+      `SELECT profile_image_url FROM users WHERE user_id = $1`,
+      [user_id]
+    );
+    if (result.rows[0].profile_image_url) {
+      return result.rows[0].profile_image_url;
+    } else {
+      return "https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0=";
     }
   }
 
@@ -44,7 +72,7 @@ export default async function UserProfile() {
       {/* ---------- Profile Section ----------- */}
       <VStack mt={4} align="center">
         <Image
-          src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
+          src={await getProfilePic(user_id)}
           alt="User Profile Picture"
           boxSize={{ base: "80px", md: "100px" }}
           borderRadius="full"
@@ -67,52 +95,67 @@ export default async function UserProfile() {
       </VStack>
 
       {/* ----------------- Tabs Section ----------------- */}
-      <Tabs.Root defaultValue="editProfile" colorScheme="teal" mt={8}>
+      <Tabs.Root
+        defaultValue={userOwnsThisProfile ? "editProfile" : "watched"}
+        colorScheme="teal"
+        mt={8}
+      >
         <Tabs.List justifyContent="center" gap={2} flexWrap="wrap">
-          <Tabs.Trigger
-            value="editProfile"
-            _selected={{ bg: "teal.500", color: "white" }}
-          >
-            <LuUser />
-            <Text ml={2}>Edit Profile</Text>
-          </Tabs.Trigger>
+          {userOwnsThisProfile && (
+            <Tabs.Trigger
+              value="editProfile"
+              className="p-2"
+              _selected={{ bg: "teal.500", color: "white" }}
+            >
+              <LuUser />
+              <Text ml={1}>Edit Profile</Text>
+            </Tabs.Trigger>
+          )}
           <Tabs.Trigger
             value="watched"
+            className="p-2"
             _selected={{ bg: "teal.500", color: "white" }}
           >
             <LuFolder />
-            <Text ml={2}>Watched</Text>
+            <Text ml={1}>Watched</Text>
           </Tabs.Trigger>
           <Tabs.Trigger
             value="wtw"
+            className="p-2"
             _selected={{ bg: "teal.500", color: "white" }}
           >
             <LuCheckSquare />
-            <Text ml={2}>WTW</Text>
+            <Text ml={1}>WTW</Text>
           </Tabs.Trigger>
           <Tabs.Trigger
             value="followed"
+            className="p-2"
             _selected={{ bg: "teal.500", color: "white" }}
           >
             <LuUser />
-            <Text ml={2}>Followed</Text>
+            <Text ml={1}>Followed</Text>
           </Tabs.Trigger>
         </Tabs.List>
 
-        <Tabs.Content value="editProfile">
-          <VStack align="start">
-            <Heading size="sm" mt={4}>
-              Edit Your Profile
-            </Heading>
-            <Text mt={2}>Here, users can edit their profile information.</Text>
-            <EditProfile />
-          </VStack>
-        </Tabs.Content>
+        {/* edit tab only shows up if it's your profile */}
+        {userOwnsThisProfile && (
+          <Tabs.Content value="editProfile">
+            <VStack align="start">
+              <Heading size="sm" mt={4}>
+                Edit Your Profile
+              </Heading>
+              <Text mt={2}>
+                Here, users can edit their profile information.
+              </Text>
+              <EditProfile />
+            </VStack>
+          </Tabs.Content>
+        )}
 
         <Tabs.Content value="watched">
           <VStack align="start">
             <Heading size="sm" mt={4}>
-              Movies You&apos;ve Watched
+              Films {userOwnsThisProfile ? "you've" : `${username} has`} watched
             </Heading>
             <FilmGallery
               filmList={await getAllFilmsFromList("watched")}
@@ -123,7 +166,8 @@ export default async function UserProfile() {
         <Tabs.Content value="wtw">
           <VStack align="start">
             <Heading size="sm" mt={4}>
-              Movies You Want to Watch
+              Films {userOwnsThisProfile ? "you want" : `${username} wants`} to
+              watch
             </Heading>
             <FilmGallery
               filmList={await getAllFilmsFromList("wtw")}
@@ -134,10 +178,10 @@ export default async function UserProfile() {
         <Tabs.Content value="followed">
           <VStack align="start">
             <Heading size="sm" mt={4}>
-              People You Follow
+              People{" "}
+              {userOwnsThisProfile ? "you follow" : `${username} follows`}
             </Heading>
-            <Box w="100%" h="50px" bg="gray.200" mt={2}></Box>
-            <Box w="100%" h="50px" bg="gray.200" mt={2}></Box>
+            <FollowList user_id={user_id} />
           </VStack>
         </Tabs.Content>
       </Tabs.Root>

@@ -62,6 +62,7 @@ export default function SearchBar() {
             size="md"
             height="full"
             _placeholder={{ color: "gray.500" }}
+            color="gray.900"
           />
         </InputGroup>
       </HStack>

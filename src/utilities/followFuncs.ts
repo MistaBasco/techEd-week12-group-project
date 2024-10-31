@@ -61,3 +61,27 @@ export async function deleteFromFollows(user_id: number): Promise<boolean> {
   }
   return false;
 }
+
+export async function getAllFollows(user_id: number) {
+  const db = connect();
+  const result = await db.query<FollowRelation & User>(
+    `SELECT * FROM follows INNER JOIN users ON followed_id = users.user_id WHERE follower_id = $1`,
+    [user_id]
+  );
+  return result.rows;
+}
+
+export type FollowRelation = {
+  following_id: number;
+  follower_id: number;
+  created_at: Date;
+};
+
+export type User = {
+  user_id: number;
+  username: string;
+  clerk_id: string;
+  profile_image_url?: string;
+  first_name?: string;
+  last_name?: string;
+};
