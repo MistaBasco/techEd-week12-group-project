@@ -6,18 +6,15 @@ import SearchBar from "./SearchBar";
 export default function Header() {
   return (
     <header className="sticky top-0 z-10 flex items-center bg-slate-700 text-white shadow-md px-4 py-3">
-      <h1 className="font-bold text-2xl mr-4 text-yellow-300">
-        Overrated&trade;
-      </h1>
-
+      <Link href="/">
+        <h1 className="font-bold m-2 text-2xl">Overrated&trade;</h1>
+      </Link>
       {/* -----------------Navigation Links ---------------*/}
       <NavBar />
-
       {/* --------------Centered Search Bar----------------- */}
       <div className="flex-1 px-4">
         <SearchBar />
       </div>
-
       {/*-------------- Authentication Links----------------- */}
       <div className="flex items-center gap-4">
         <SignedIn>

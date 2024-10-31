@@ -34,10 +34,24 @@ export default function WatchedListButton(props: WatchedListButtonProps) {
         ? "added to watched"
         : "removed from watched";
       onStatusChange(newStatus);
+      if (response.ok) {
+        // Log activity when a film is added/removed from watched list
+        await fetch("/api/log-activity", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            filmId,
+            activityType:
+              newStatus === "added to watched" ? "watch" : "remove_watch",
+          }),
+        });
+      }
       console.log("newStatus: ", newStatus);
       if (newStatus === "added to watched") {
         // Ensure the film is removed from the watchlist if added to the watched list
-        setTimeout(() => onStatusChange("removed from watched"), 0);
+        onStatusChange("removed from watched");
       } // Update parent component state
     } catch (error) {
       console.error("Error:", error);
