@@ -16,32 +16,27 @@ export default function CommentCard({
   username,
 }: CommentCardProps) {
   return (
-    <div
-      key={comment.comment_id}
-      className="flex gap-4 items-start mb-4 border-b pb-4 border-gray-300 relative"
-    >
-      <div className="w-10 h-10">
+    <div className="flex gap-4 items-start mb-6 p-4 rounded-lg bg-gray-50 shadow-md relative">
+      <div className="w-12 h-12">
         <Image
           src={profile_image}
           alt="Profile"
-          width={40}
-          height={40}
+          width={48}
+          height={48}
           className="rounded-full"
         />
       </div>
-      <div>
-        <p className="text-sm font-semibold text-gray-800">
-          {username}
-          {/* TODO add first and last name */}
-        </p>
-
+      <div className="flex-1">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-semibold text-gray-800">{username}</p>
+          <DeleteButton
+            deleteFunc={handleDelete}
+            postId={comment.comment_id}
+            postType="comment"
+          />
+        </div>
         <p className="text-sm text-gray-600 mt-1">{comment.body}</p>
       </div>
-      <DeleteButton
-        deleteFunc={handleDelete}
-        postId={comment.comment_id}
-        postType="comment"
-      />
     </div>
   );
 }

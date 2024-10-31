@@ -17,7 +17,10 @@ export default async function CommentCounter({
 
   return (
     <p>
-      <Link className="underline" href={`/feed/${activity_id}`}>
+      <Link
+        className="text-blue-600 hover:underline text-sm font-medium"
+        href={`/feed/${activity_id}`}
+      >
         {await countComments(activity_id)} comments
       </Link>
     </p>

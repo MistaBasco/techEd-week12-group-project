@@ -13,6 +13,7 @@ import { SignedIn } from "@clerk/nextjs";
 import CommentSection from "./CommentSection";
 import CommentCounter from "./CommentCounter";
 import LikeCounter from "./LikeCounter";
+import FollowButton from "./FollowButton";
 
 export default async function ActivityComponent({
   activity,
@@ -40,7 +41,7 @@ export default async function ActivityComponent({
   }
 
   const filmLink = (
-    <Link className="underline" href={`/films/${film_id}`}>
+    <Link className="underline text-blue-600 hover:text-blue-800" href={`/films/${film_id}`}>
       {film.title}
     </Link>
   );
@@ -56,37 +57,47 @@ export default async function ActivityComponent({
   }
 
   return (
-    <div className="relative bg-slate-400 rounded-xl p-4 m-1">
-      <p id={`activity#${activity_id}`}>
-        {username} {verb}
-      </p>
-      <Timestamp timestamp={created_at} />
-      {activity_body ? (
-        <p>
+    <div className="bg-white rounded-lg p-6 shadow-lg mb-4 mt-3 space-y-4">
+      <div className="flex items-center justify-between">
+        <p id={`activity#${activity_id}`} className="text-gray-800 font-semibold text-lg">
+          {username} {verb}
+        </p>
+        <Timestamp timestamp={created_at} />
+      </div>
+      {activity_body && (
+        <p className="text-gray-700 text-sm bg-gray-100 p-3 rounded-md">
           {username}: {activity_body}
         </p>
-      ) : null}
-      <SignedIn>
-        <LikeButton
-          postId={activity_id}
-          userId={myUserId!}
-          likeFunc={updateLikes}
-          checkIfLiked={checkIfLiked}
-        />
-      </SignedIn>
-      <LikeCounter activity_id={activity_id} />
-      <SignedIn>
-        <DeleteButton
-          deleteFunc={handleDelete}
-          postId={activity_id}
-          postType="activity"
-        />
+      )}
+      <div className="flex items-center space-x-4">
+        <SignedIn>
+          <LikeButton
+            postId={activity_id}
+            userId={myUserId!}
+            likeFunc={updateLikes}
+            checkIfLiked={checkIfLiked}
+          />
+        </SignedIn>
+        <LikeCounter activity_id={activity_id} />
+        <SignedIn>
+          <div className="relative">
+            <DeleteButton
+              deleteFunc={handleDelete}
+              postId={activity_id}
+              postType="activity"
+            
+            />
+          </div>
+          <FollowButton user_id={user_id} />
+        </SignedIn>
+      </div>
+      <div>
         {showComments ? (
           <CommentSection activity_id={activity_id} />
         ) : (
           <CommentCounter activity_id={activity_id} />
         )}
-      </SignedIn>
+      </div>
     </div>
   );
 }

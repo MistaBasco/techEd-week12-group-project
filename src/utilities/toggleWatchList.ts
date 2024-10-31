@@ -11,14 +11,16 @@ export default async function toggleWatchlist({
 }: ToggleWatchlistProps) {
   const db = connect();
 
-  const checkQuery = `
+  try {
+    await db.query("BEGIN");
+    const checkQuery = `
     SELECT 1 
     FROM wtw_films
     WHERE user_id = $1 AND film_id = $2;
   `;
-
-  try {
     const result = await db.query(checkQuery, [userId, filmId]);
+
+    let action: "added" | "removed";
 
     if (
       result?.rowCount !== null &&
@@ -31,6 +33,7 @@ export default async function toggleWatchlist({
         WHERE user_id = $1 AND film_id = $2;
       `;
       await db.query(deleteQuery, [userId, filmId]);
+      action = "removed";
       console.log("Film removed from watchlist.");
     } else {
       // Film is not in the watchlist, add it
@@ -39,10 +42,13 @@ export default async function toggleWatchlist({
         VALUES ($1, $2);
       `;
       await db.query(insertQuery, [userId, filmId]);
+      action = "added";
       console.log("Film added to watchlist.");
     }
-  } catch (err) {
-    console.error("Error toggling film in watchlist:", err);
-    throw new Error("Could not toggle film in watchlist."); // Optional: Rethrow for upstream error handling
+    await db.query("COMMIT");
+    return action;
+  } catch (error) {
+    await db.query("ROLLBACK");
+    throw error;
   }
 }

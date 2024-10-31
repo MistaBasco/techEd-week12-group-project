@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import CommentFormInput from "./CommentFormInput";
+import { Button } from "@chakra-ui/react";
+import { useRouter } from "next/navigation"; // Import useRouter
 
 export default function PostComment({
   submitComment,
@@ -13,12 +15,12 @@ export default function PostComment({
     username: "",
     comment: "",
   });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const router = useRouter(); // Initialize useRouter
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     setIsSubmitting(true);
 
     const commentData = new FormData(event.currentTarget);
@@ -31,6 +33,9 @@ export default function PostComment({
 
       setFormData({ username: "", comment: "" });
       event.currentTarget.reset();
+
+      // Refresh the page
+      router.refresh();
     } catch (error) {
       console.error("Error posting comment:", error);
     } finally {
@@ -46,27 +51,28 @@ export default function PostComment({
   }
 
   return (
-    <>
-      <form
-        method="POST"
-        onSubmit={handleSubmit}
-        className="flex flex-col bg-slate-400 p-16 gap-[13px]"
+    <form
+      method="POST"
+      onSubmit={handleSubmit}
+      className="flex flex-col bg-white p-6 rounded-lg shadow-md space-y-4"
+    >
+      <CommentFormInput
+        onChange={handleChange}
+        placeholder="Enter your comment..."
+        value={formData.comment}
+      />
+      <Button
+        type="submit"
+        colorScheme="blue"
+        size="md"
+        fontWeight="bold"
+        w="full"
+        _hover={{ bg: "blue.600", transform: "scale(1.03)" }}
+        transition="transform 0.2s ease-in-out, background-color 0.2s"
+        disabled={formData.comment.length < 1}
       >
-        <CommentFormInput
-          onChange={handleChange}
-          placeholder="Enter comment here"
-          value={formData.comment}
-        />
-        <button
-          type="submit"
-          className={`rounded p-4 ${
-            formData.comment.length < 1 ? "bg-slate-500" : "bg-green-500"
-          }`}
-          disabled={isSubmitting || formData.comment.length < 1}
-        >
-          {isSubmitting ? "Submitting..." : "Submit"}
-        </button>
-      </form>
-    </>
+        {isSubmitting ? "Submitting..." : "Submit"}
+      </Button>
+    </form>
   );
 }
