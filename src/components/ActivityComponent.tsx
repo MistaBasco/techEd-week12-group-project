@@ -60,12 +60,9 @@ export default async function ActivityComponent({
   }
 
   return (
-    <div className="bg-gray-50 rounded-lg p-6 shadow-lg mb-4 mt-3 space-y-4">
-      <div className="flex items-center justify-between">
-        <p
-          id={`activity#${activity_id}`}
-          className="text-gray-800 font-semibold text-lg"
-        >
+    <div className="bg-gray-50 rounded-lg p-6 shadow-lg mb-4 mt-3 space-y-4 text-gray-800">
+      <div className="flex items-center justify-between flex-col md:flex-row">
+        <p id={`activity#${activity_id}`} className="font-semibold text-lg">
           {username} {verb}
         </p>
         <Timestamp timestamp={created_at} />

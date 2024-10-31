@@ -45,6 +45,23 @@ export default async function Feed({
   const showFollowingOnly =
     (await searchParams).following === "true" ? true : false;
 
+  function ActivityBox({ activity }: { activity: Activity }) {
+    return (
+      <Box
+        p={6}
+        bg="rgba(50, 50, 50, 0.85)"
+        borderRadius="2xl"
+        border="1px solid rgba(255, 255, 255, 0.2)"
+        boxShadow="0px 4px 20px rgba(0, 0, 0, 0.2)"
+        backdropFilter="blur(8px)" // Applies blur effect
+        w="100%"
+        maxW="80vw"
+      >
+        <ActivityComponent activity={activity} />
+      </Box>
+    );
+  }
+
   return (
     <Flex
       minH="100vh"
@@ -56,37 +73,23 @@ export default async function Feed({
       w="full"
     >
       <VStack w="90%" maxW="900px" py={8} gap={6}>
-        <Heading size="lg" color="whiteAlpha.900" mb={4}></Heading>
+        <Heading size="lg" color="whiteAlpha.900" mb={4}>
+          {showFollowingOnly
+            ? "Activities from people you follow"
+            : "Activities"}
+        </Heading>
         {showFollowingOnly
           ? (await getFollowedActivities()).map((element) => (
-              <Box
+              <ActivityBox
                 key={element.activity_id}
-                p={6}
-                bg="rgba(50, 50, 50, 0.85)"
-                borderRadius="2xl"
-                border="1px solid rgba(255, 255, 255, 0.2)"
-                boxShadow="0px 4px 20px rgba(0, 0, 0, 0.2)"
-                backdropFilter="blur(8px)" // Applies blur effect
-                w="100%"
-                maxW="80vw"
-              >
-                <ActivityComponent activity={element} />
-              </Box>
+                activity={element}
+              ></ActivityBox>
             ))
           : (await getActivities()).map((element) => (
-              <Box
+              <ActivityBox
                 key={element.activity_id}
-                p={6}
-                bg="rgba(50, 50, 50, 0.85)"
-                borderRadius="2xl"
-                border="1px solid rgba(255, 255, 255, 0.2)"
-                boxShadow="0px 4px 20px rgba(0, 0, 0, 0.2)"
-                backdropFilter="blur(8px)" // Applies blur effect
-                w="100%"
-                maxW="80vw"
-              >
-                <ActivityComponent activity={element} />
-              </Box>
+                activity={element}
+              ></ActivityBox>
             ))}
       </VStack>
     </Flex>
