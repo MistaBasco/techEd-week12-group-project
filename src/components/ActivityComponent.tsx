@@ -41,7 +41,10 @@ export default async function ActivityComponent({
   }
 
   const filmLink = (
-    <Link className="underline text-blue-600 hover:text-blue-800" href={`/films/${film_id}`}>
+    <Link
+      className="underline text-blue-600 hover:text-blue-800"
+      href={`/films/${film_id}`}
+    >
       {film.title}
     </Link>
   );
@@ -57,9 +60,12 @@ export default async function ActivityComponent({
   }
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-lg mb-4 mt-3 space-y-4">
+    <div className="bg-gray-50 rounded-lg p-6 shadow-lg mb-4 mt-3 space-y-4">
       <div className="flex items-center justify-between">
-        <p id={`activity#${activity_id}`} className="text-gray-800 font-semibold text-lg">
+        <p
+          id={`activity#${activity_id}`}
+          className="text-gray-800 font-semibold text-lg"
+        >
           {username} {verb}
         </p>
         <Timestamp timestamp={created_at} />
@@ -85,7 +91,6 @@ export default async function ActivityComponent({
               deleteFunc={handleDelete}
               postId={activity_id}
               postType="activity"
-            
             />
           </div>
           <FollowButton user_id={user_id} />
