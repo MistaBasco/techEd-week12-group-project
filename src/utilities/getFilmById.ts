@@ -10,6 +10,7 @@ export type Film = {
   release_year?: number;
   created_at: Date;
   updated_at: Date;
+  tmdb_id?: number;
 };
 
 export default async function getFilmById(film_id: number): Promise<Film> {
