@@ -1,4 +1,5 @@
 import connect from "@/utilities/connect";
+import { currentUser } from "@clerk/nextjs/server";
 
 type ToggleWatchedListProps = {
   userId: number;
@@ -10,6 +11,7 @@ export default async function toggleWatchedList({
   filmId,
 }: ToggleWatchedListProps) {
   const db = connect();
+  let action: "added to watched" | "removed from watched" | null = null;
 
   try {
     await db.query("BEGIN");
@@ -20,8 +22,6 @@ export default async function toggleWatchedList({
       WHERE user_id = $1 AND film_id = $2;
     `;
     const watchedResult = await db.query(watchedCheckQuery, [userId, filmId]);
-
-    let action: "added to watched" | "removed from watched"; //resume
 
     if (
       watchedResult?.rowCount !== null &&
@@ -65,23 +65,63 @@ export default async function toggleWatchedList({
         await db.query(insertWatchedQuery, [userId, filmId]);
         action = "added to watched";
         console.log("Film added to watched list.");
-      } else {
-        // Add the film to the watched list
-        const insertWatchedQuery = `
-        INSERT INTO watched_films (user_id, film_id)
-        VALUES ($1, $2);
-      `;
-        await db.query(insertWatchedQuery, [userId, filmId]);
-        action = "added to watched";
-        console.log("Film added to watched list.");
       }
+      //  else {
+      //   // Add the film to the watched list
+      //   const insertWatchedQuery = `
+      //   INSERT INTO watched_films (user_id, film_id)
+      //   VALUES ($1, $2);
+      // `;
+      //   await db.query(insertWatchedQuery, [userId, filmId]);
+      //   action = "added to watched";
+      //   console.log("Film added to watched list.");
+      // }
     }
 
+    if (action === "added to watched") {
+      try {
+        const userPromise = currentUser();
+        const user = await userPromise;
+        const postUserId = user?.id;
+        console.log("tWL currentUser.userId = " + userId);
+        if (!user || !user.id) {
+          throw new Error("User is not authenticated.");
+        }
+        console.log("Activity Response: ");
+        console.log("filmId: " + filmId);
+        console.log("userId: " + userId);
+        console.log("activityType: " + "watch_from_wtw");
+
+        const activityResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/log-activity`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              filmId,
+              postUserId,
+              activityType: "watch_from_wtw",
+            }),
+          }
+        );
+
+        if (!activityResponse.ok) {
+          console.error(
+            "Failed to log activity: ",
+            await activityResponse.text()
+          );
+        }
+      } catch (activityError) {
+        console.error("Error logging activity:", activityError);
+      }
+    }
     await db.query("COMMIT");
     return action;
   } catch (err) {
     await db.query("ROLLBACK");
     console.error("Error toggling film in watched list:", err);
-    throw new Error("Failed to toggle watched status");
+    throw err;
   }
 }
