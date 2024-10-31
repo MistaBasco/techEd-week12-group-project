@@ -2,8 +2,9 @@ import SplashPage from "@/components/Splashpage";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import connect from "@/utilities/connect";
 import { Pool } from "pg";
-import { Box, Flex, Image, Text, Link } from "@chakra-ui/react";
+import { Box, Flex, Image, Text } from "@chakra-ui/react";
 import Footer from "@/components/Footer";
+import getAllFilms from "@/utilities/getAllFilms";
 
 export default async function Home() {
   const posterPath = await fetchRandomPosterPath();
@@ -13,7 +14,7 @@ export default async function Home() {
         <SplashPage posterPath={posterPath} />
       </SignedOut>
       <SignedIn>
-        <Box bg="gray.100" minH="100vh" py={8} px={[4, 8, 16]}>
+        <Box bg="gray.900" minH="100vh" py={8} px={[4, 8, 16]}>
           {/*------------------- Film Banner Image------------------ */}
           <Flex
             direction="column"
@@ -23,7 +24,7 @@ export default async function Home() {
             mb={16}
           >
             <Image
-              src="URL HERE"
+              src="https://media.themoviedb.org/t/p/w1920_and_h800_multi_faces/w5IDXtifKntw0ajv2co7jFlTQDM.jpg"
               alt="Film Head Image"
               borderRadius="md"
               objectFit="cover"
@@ -44,12 +45,12 @@ export default async function Home() {
             {/*--------------------- Top Films Section -------------------------*/}
             <Box w="100%" mb={8}>
               <Text fontSize="lg" fontWeight="bold" textAlign="center" mb={4}>
-                Most Recent Films
+                Top Films
               </Text>
               <Flex justify="center" wrap="wrap" gap={4}>
-                {[1, 2, 3, 4].map((film) => (
+                {(await getAllFilms(4, "asc")).map((film) => (
                   <Box
-                    key={film}
+                    key={film.film_id}
                     w="150px"
                     h="200px"
                     bg="gray.300"
@@ -60,8 +61,8 @@ export default async function Home() {
                     justifyContent="center"
                   >
                     <Image
-                      src={`/path/to/film${film}.jpg`}
-                      alt={`Top Film ${film}`}
+                      src={film.poster_path}
+                      alt={film.title}
                       objectFit="cover"
                       w="full"
                       h="full"
