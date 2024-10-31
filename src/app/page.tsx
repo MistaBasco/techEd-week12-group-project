@@ -15,7 +15,7 @@ export default async function Home() {
       {/*------------------- Film Banner Image------------------ */}
       <Flex direction="column" align="center" justify="center" mt={8} mb={16}>
         <Image
-          src="/path/to/film-banner.jpg"
+          src="URL HERE"
           alt="Film Head Image"
           borderRadius="md"
           objectFit="cover"

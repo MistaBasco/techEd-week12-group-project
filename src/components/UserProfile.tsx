@@ -70,11 +70,12 @@ export default async function UserProfile({ user_id }: { user_id: number }) {
       minH="100vh"
       align="center"
       justify="center"
-      bgImage="url('/background3.jpg')"
-      backgroundPosition="center"
+      // bgImage="url('/background3.jpg')"
+
       bgRepeat="no-repeat"
       bgSize="cover"
       px={4}
+      className="sticky inset-0 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] overflow-y-auto w-full"
     >
       <Box
         p={{ base: 4, md: 8 }}
