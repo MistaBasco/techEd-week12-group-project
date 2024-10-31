@@ -1,3 +1,5 @@
+"use server";
+
 type TMDBCreditsResult = {
   id: number;
   crew: { name: string; job: string }[];
