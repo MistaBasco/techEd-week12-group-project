@@ -13,6 +13,7 @@ export default async function NavBar() {
     <nav className="flex h-full items-center justify-center gap-4 pl-4">
       <Link href="/">Home</Link>
       <Link href="/feed">Feed</Link>
+      <Link href="/films">Films</Link>
 
       <SignedIn>
         <Link href={`/profile/${await getUserId()}`}>My Profile</Link>
