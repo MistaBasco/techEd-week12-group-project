@@ -1,4 +1,4 @@
-import { Box, Button, Heading, VStack, Text, Image } from "@chakra-ui/react";
+import { Box, Heading, VStack, Text, Image, Flex } from "@chakra-ui/react";
 import { Tabs } from "@chakra-ui/react";
 import { LuUser, LuFolder, LuCheckSquare } from "react-icons/lu";
 import EditProfile from "./EditProfile";
@@ -27,7 +27,6 @@ export default async function UserProfile({ user_id }: { user_id: number }) {
   }
 
   let username: string;
-  // check if the user_id corresponds to a real user, else boot us out to not-found page
   try {
     username = await getUsernameById(user_id);
   } catch (error) {
@@ -60,138 +59,174 @@ export default async function UserProfile({ user_id }: { user_id: number }) {
       `SELECT profile_image_url FROM users WHERE user_id = $1`,
       [user_id]
     );
-    if (result.rows[0].profile_image_url) {
-      return result.rows[0].profile_image_url;
-    } else {
-      return "https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0=";
-    }
+    return (
+      result.rows[0].profile_image_url ||
+      "https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
+    );
   }
 
   return (
-    <Box
-      p={{ base: 4, md: 8 }}
-      bg="rgba(255, 255, 255, 0.1)"
-      backdropFilter="blur(10px)"
-      rounded="lg"
-      boxShadow="lg"
+    <Flex
       minH="100vh"
+      align="center"
+      justify="center"
+      bgImage="url('/background3.jpg')"
+      backgroundPosition="center"
+      bgRepeat="no-repeat"
+      bgSize="cover"
+      px={4}
     >
-      {/* Profile Section */}
-      <VStack mt={4} align="center">
-        <Image
-          src={await getProfilePic(user_id)}
-          alt="User Profile Picture"
-          boxSize={{ base: "80px", md: "100px" }}
-          borderRadius="full"
-          bg="gray.300"
-        />
-        <Heading size={{ base: "md", md: "lg" }} mt={4}>
-          {username}
-        </Heading>
-        <Button
-          variant="solid"
-          colorScheme="teal"
-          size="sm"
-          px={6}
-          mt={2}
-          boxShadow="md"
-          _hover={{ boxShadow: "lg", bg: "teal.600" }}
-        >
-          Edit Profile
-        </Button>
-      </VStack>
-
-      {/* ----------------- Tabs Section ----------------- */}
-      <Tabs.Root
-        defaultValue={userOwnsThisProfile ? "editProfile" : "watched"}
-        colorScheme="teal"
-        mt={8}
+      <Box
+        p={{ base: 4, md: 8 }}
+        bg="rgba(255, 255, 255, 0.1)"
+        borderRadius="2xl"
+        boxShadow="lg"
+        border="1px solid rgba(255, 255, 255, 0.3)"
+        position="relative"
+        minH="600px"
+        width="80vw"
+        maxW="80vw"
+        _before={{
+          content: '""',
+          position: "absolute",
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          bg: "inherit",
+          backdropFilter: "blur(10px)",
+          borderRadius: "2xl",
+        }}
       >
-        <Tabs.List justifyContent="center" gap={2} flexWrap="wrap">
-          {userOwnsThisProfile && (
+        <VStack mt={4} align="center">
+          <Flex
+            mt={4}
+            align="center"
+            justify="center"
+            direction="column"
+            position="relative"
+            zIndex="1"
+          >
+            <Image
+              src={await getProfilePic(user_id)}
+              alt="User Profile Picture"
+              boxSize={{ base: "80px", md: "100px" }}
+              borderRadius="full"
+              bg="gray.300"
+              border="2px solid rgba(255, 255, 255, 0.4)"
+              boxShadow="0px 4px 20px rgba(0, 0, 0, 0.2)"
+            />
+            <Heading
+              size={{ base: "md", md: "lg" }}
+              mt={4}
+              color="whiteAlpha.900"
+            >
+              {username}
+            </Heading>
+          </Flex>
+
+          <Heading
+            size={{ base: "md", md: "lg" }}
+            mt={4}
+            color="whiteAlpha.900"
+          >
+            {username}
+          </Heading>
+        </VStack>
+
+        <Tabs.Root
+          defaultValue={userOwnsThisProfile ? "editProfile" : "watched"}
+          colorScheme="teal"
+          mt={8}
+        >
+          <Tabs.List justifyContent="center" gap={2} flexWrap="wrap">
+            {userOwnsThisProfile && (
+              <Tabs.Trigger
+                value="editProfile"
+                className="p-2"
+                _selected={{ color: "white" }}
+              >
+                <LuUser />
+                <Text ml={1}>Edit Profile</Text>
+              </Tabs.Trigger>
+            )}
             <Tabs.Trigger
-              value="editProfile"
+              value="watched"
               className="p-2"
-              _selected={{ bg: "teal.500", color: "white" }}
+              _selected={{ color: "white" }}
+            >
+              <LuFolder />
+              <Text ml={1}>Watched</Text>
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              value="wtw"
+              className="p-2"
+              _selected={{ color: "white" }}
+            >
+              <LuCheckSquare />
+              <Text ml={1}>WTW</Text>
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              value="followed"
+              className="p-2"
+              _selected={{ color: "white" }}
             >
               <LuUser />
-              <Text ml={1}>Edit Profile</Text>
+              <Text ml={1}>Followed</Text>
             </Tabs.Trigger>
-          )}
-          <Tabs.Trigger
-            value="watched"
-            className="p-2"
-            _selected={{ bg: "teal.500", color: "white" }}
-          >
-            <LuFolder />
-            <Text ml={1}>Watched</Text>
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            value="wtw"
-            className="p-2"
-            _selected={{ bg: "teal.500", color: "white" }}
-          >
-            <LuCheckSquare />
-            <Text ml={1}>WTW</Text>
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            value="followed"
-            className="p-2"
-            _selected={{ bg: "teal.500", color: "white" }}
-          >
-            <LuUser />
-            <Text ml={1}>Followed</Text>
-          </Tabs.Trigger>
-        </Tabs.List>
+          </Tabs.List>
 
-        {/* edit tab only shows up if it's your profile */}
-        {userOwnsThisProfile && (
-          <Tabs.Content value="editProfile">
-            <VStack align="start">
-              <Heading size="sm" mt={4}>
-                Edit Your Profile
-              </Heading>
-              <Text mt={2}>
-                Here, users can edit their profile information.
-              </Text>
-              <EditProfile />
-            </VStack>
-          </Tabs.Content>
-        )}
+          <Box mt={4} p={4}>
+            {userOwnsThisProfile && (
+              <Tabs.Content value="editProfile">
+                <VStack align="start">
+                  <Heading size="sm" color="whiteAlpha.900">
+                    Edit Your Profile
+                  </Heading>
+                  <Text mt={2} color="whiteAlpha.800">
+                    Here, users can edit their profile information.
+                  </Text>
+                  <EditProfile />
+                </VStack>
+              </Tabs.Content>
+            )}
 
-        <Tabs.Content value="watched">
-          <VStack align="start">
-            <Heading size="sm" mt={4}>
-              Films {userOwnsThisProfile ? "you've" : `${username} has`} watched
-            </Heading>
-            <FilmGallery
-              filmList={await getAllFilmsFromList("watched")}
-            ></FilmGallery>
-          </VStack>
-        </Tabs.Content>
+            <Tabs.Content value="watched">
+              <VStack align="start">
+                <Heading size="sm" color="whiteAlpha.900">
+                  Films {userOwnsThisProfile ? "you've" : `${username} has`}{" "}
+                  watched
+                </Heading>
+                <FilmGallery
+                  filmList={await getAllFilmsFromList("watched")}
+                ></FilmGallery>
+              </VStack>
+            </Tabs.Content>
 
-        <Tabs.Content value="wtw">
-          <VStack align="start">
-            <Heading size="sm" mt={4}>
-              Films {userOwnsThisProfile ? "you want" : `${username} wants`} to
-              watch
-            </Heading>
-            <FilmGallery
-              filmList={await getAllFilmsFromList("wtw")}
-            ></FilmGallery>
-          </VStack>
-        </Tabs.Content>
+            <Tabs.Content value="wtw">
+              <VStack align="start">
+                <Heading size="sm" color="whiteAlpha.900">
+                  Films {userOwnsThisProfile ? "you want" : `${username} wants`}{" "}
+                  to watch
+                </Heading>
+                <FilmGallery
+                  filmList={await getAllFilmsFromList("wtw")}
+                ></FilmGallery>
+              </VStack>
+            </Tabs.Content>
 
-        <Tabs.Content value="followed">
-          <VStack align="start">
-            <Heading size="sm" mt={4}>
-              People{" "}
-              {userOwnsThisProfile ? "you follow" : `${username} follows`}
-            </Heading>
-            <FollowList user_id={user_id} />
-          </VStack>
-        </Tabs.Content>
-      </Tabs.Root>
-    </Box>
+            <Tabs.Content value="followed">
+              <VStack align="start">
+                <Heading size="sm" color="whiteAlpha.900">
+                  People{" "}
+                  {userOwnsThisProfile ? "you follow" : `${username} follows`}
+                </Heading>
+                <FollowList user_id={user_id} />
+              </VStack>
+            </Tabs.Content>
+          </Box>
+        </Tabs.Root>
+      </Box>
+    </Flex>
   );
 }
