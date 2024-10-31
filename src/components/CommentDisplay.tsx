@@ -16,8 +16,10 @@ type CommentDisplayProps = {
 
 export default function CommentDisplay({ comments }: CommentDisplayProps) {
   return (
-    <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold mb-4 text-gray-700">Comments</h3>
+    <div className="mt-6 bg-white p-6 rounded-lg shadow-lg space-y-6">
+      <h3 className="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2">
+        Comments
+      </h3>
       {comments.length > 0 ? (
         comments.map(async (comment: Comment) => {
           const username = await getUsernameById(comment.user_id);
@@ -33,6 +35,7 @@ export default function CommentDisplay({ comments }: CommentDisplayProps) {
               comment={comment}
               profile_image={profile_image}
               username={username}
+              
             />
           );
         })

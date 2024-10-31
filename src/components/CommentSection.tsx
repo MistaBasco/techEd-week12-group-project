@@ -12,11 +12,13 @@ export default async function CommentSection({
   activity_id: number;
 }) {
   return (
-    <section>
+    <section className="bg-gray-50 p-4 rounded-lg shadow-md space-y-4">
       <SignedIn>
         <Collapsible.Root>
-          <Collapsible.Trigger>Comment on this activity</Collapsible.Trigger>
-          <Collapsible.Content>
+          <Collapsible.Trigger className="text-blue-600 font-semibold cursor-pointer hover:underline">
+            Comment on this activity
+          </Collapsible.Trigger>
+          <Collapsible.Content className="mt-4">
             <CommentForm
               submitComment={submitComment}
               activity_id={activity_id}
@@ -24,7 +26,9 @@ export default async function CommentSection({
           </Collapsible.Content>
         </Collapsible.Root>
       </SignedIn>
-      <CommentDisplay comments={await getComments(activity_id)} />
+      <div className="mt-4">
+        <CommentDisplay comments={await getComments(activity_id)} />
+      </div>
     </section>
   );
 }
