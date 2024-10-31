@@ -31,6 +31,19 @@ export default function WatchlistButton(props: WatchlistButtonProps) {
       const data = await response.json();
       const newStatus = data.message.includes("added") ? "added" : "removed";
       onStatusChange(newStatus);
+      if (response.ok) {
+        // Log activity when a film is added/removed from watched list
+        await fetch("/api/log-activity", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            filmId,
+            activityType: newStatus === "added" ? "wtw" : "remove_wtw",
+          }),
+        });
+      }
     } catch (error) {
       console.error("Error:", error);
     } finally {
