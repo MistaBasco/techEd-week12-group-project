@@ -9,6 +9,7 @@ import { Film } from "@/utilities/getFilmById";
 import connect from "@/utilities/connect";
 import FilmGallery from "./FilmGallery";
 import { notFound } from "next/navigation";
+import FollowList from "./FollowList";
 
 // data from watched_list and wtw_list
 type FilmListEntry = {
@@ -180,8 +181,7 @@ export default async function UserProfile({ user_id }: { user_id: number }) {
               People{" "}
               {userOwnsThisProfile ? "you follow" : `${username} follows`}
             </Heading>
-            <Box w="100%" h="50px" bg="gray.200" mt={2}></Box>
-            <Box w="100%" h="50px" bg="gray.200" mt={2}></Box>
+            <FollowList user_id={user_id} />
           </VStack>
         </Tabs.Content>
       </Tabs.Root>
